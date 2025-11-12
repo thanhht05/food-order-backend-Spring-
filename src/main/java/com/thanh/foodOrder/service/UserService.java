@@ -3,6 +3,7 @@ package com.thanh.foodOrder.service;
 import com.thanh.foodOrder.domain.User;
 import com.thanh.foodOrder.domain.respone.ResponseUserDTO;
 import com.thanh.foodOrder.repository.UserRepository;
+import com.thanh.foodOrder.util.exception.CommonException;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -20,8 +21,14 @@ public class UserService {
     }
 
     public ResponseUserDTO createUser(User user) {
+        log.info("Creating user with email: {}", user.getEmail());
 
+        if (checkExistsByEmail(user.getEmail())) {
+            log.warn("Email {} already exists", user.getEmail());
+            throw new CommonException("Email " + user.getEmail() + " already exists");
+        }
         User savedUser = userRepository.save(user);
+        log.info("User created successfully with id: {}", savedUser.getId());
         return convertUserToResUserDTO(savedUser);
     }
 
@@ -33,5 +40,9 @@ public class UserService {
         userDTO.setPhone(user.getPhone());
         userDTO.setCreatedAt(user.getCreatedAt());
         return userDTO;
+    }
+
+    public boolean checkExistsByEmail(String email) {
+        return this.userRepository.existsByEmail(email);
     }
 }

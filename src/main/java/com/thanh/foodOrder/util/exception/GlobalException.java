@@ -1,7 +1,6 @@
 package com.thanh.foodOrder.util.exception;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -17,6 +16,20 @@ import com.thanh.foodOrder.domain.ResResponse;
 
 @RestControllerAdvice
 public class GlobalException {
+
+    @ExceptionHandler(value = {
+            CommonException.class
+    })
+    public ResponseEntity<ResResponse<Object>> handleException(Exception exception) {
+        ResResponse<Object> res = new ResResponse<>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setMessage("Business logic error");
+
+        res.setError(exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ResResponse<Object>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException exception) {
