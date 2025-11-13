@@ -4,6 +4,7 @@ import com.thanh.foodOrder.domain.ResultPaginationDTO;
 import com.thanh.foodOrder.domain.User;
 import com.thanh.foodOrder.domain.respone.ResponseUserDTO;
 import com.thanh.foodOrder.repository.UserRepository;
+import com.thanh.foodOrder.specification.UserSpecification;
 import com.thanh.foodOrder.util.exception.CommonException;
 
 import lombok.extern.log4j.Log4j2;
@@ -50,6 +51,7 @@ public class UserService {
         userDTO.setId(user.getId());
         userDTO.setFullName(user.getFullName());
         userDTO.setEmail(user.getEmail());
+        userDTO.setPoint(user.getPoint());
         userDTO.setPhone(user.getPhone());
         userDTO.setCreatedAt(user.getCreatedAt());
         return userDTO;
@@ -66,7 +68,7 @@ public class UserService {
 
         existingUser.setFullName(user.getFullName());
         existingUser.setPhone(user.getPhone());
-        // Update other fields as necessary
+        existingUser.setPoint(user.getPoint());
 
         User updatedUser = userRepository.save(existingUser);
         log.info("User with id {} updated successfully", updatedUser.getId());
@@ -90,7 +92,9 @@ public class UserService {
         });
     }
 
-    public ResultPaginationDTO getAllUser(Pageable pageable, Specification<User> spec) {
+    public ResultPaginationDTO getAllUser(Pageable pageable, String fullName) {
+        Specification<User> spec = Specification.allOf(
+                fullName != null ? UserSpecification.hasName(fullName) : null);
         Page<User> users = this.userRepository.findAll(spec, pageable);
 
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();

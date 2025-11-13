@@ -8,9 +8,11 @@ import com.thanh.foodOrder.util.anotation.ApiMessage;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -63,10 +65,12 @@ public class UserController {
 
     @GetMapping("/users")
     @ApiMessage("Get all users")
-    public ResponseEntity<ResultPaginationDTO> getAllUser(Pageable pageable) {
-        Specification<User> spec = Specification.allOf();
-        ResultPaginationDTO users = this.userService.getAllUser(pageable, spec);
+    public ResponseEntity<ResultPaginationDTO> getAllUser(
+            @RequestParam(name = "fullName", required = false) String fullName,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        ResultPaginationDTO users = this.userService.getAllUser(pageable, fullName);
         return ResponseEntity.ok().body(users);
+
     }
 
 }

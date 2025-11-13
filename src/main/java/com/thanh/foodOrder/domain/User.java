@@ -25,6 +25,8 @@ public class User {
    private String phone;
    private String createdBy;
    private String updatedBy;
+   private long point;
+   @Column(name = "created_at")
    private Instant createdAt;
    private Instant updatedAt;
 
