@@ -30,6 +30,10 @@ public class User {
    private Instant createdAt;
    private Instant updatedAt;
 
+   @ManyToOne()
+   @JoinColumn(name = "role_id")
+   private Role role;
+
    @PrePersist
    public void handleBeforeCreated() {
       this.createdAt = Instant.now();

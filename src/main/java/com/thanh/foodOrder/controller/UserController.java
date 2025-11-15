@@ -2,7 +2,7 @@ package com.thanh.foodOrder.controller;
 
 import com.thanh.foodOrder.domain.ResultPaginationDTO;
 import com.thanh.foodOrder.domain.User;
-import com.thanh.foodOrder.domain.respone.ResponseUserDTO;
+import com.thanh.foodOrder.domain.respone.user.ResponseUserDTO;
 import com.thanh.foodOrder.service.UserService;
 import com.thanh.foodOrder.util.anotation.ApiMessage;
 import jakarta.validation.Valid;
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    @ApiMessage("Create a new user")
+    @ApiMessage("Create a user")
     public ResponseEntity<ResponseUserDTO> handleCreateUser(@Valid @RequestBody User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.createUser(user));
     }

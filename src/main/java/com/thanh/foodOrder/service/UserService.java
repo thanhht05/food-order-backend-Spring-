@@ -1,8 +1,9 @@
 package com.thanh.foodOrder.service;
 
 import com.thanh.foodOrder.domain.ResultPaginationDTO;
+import com.thanh.foodOrder.domain.Role;
 import com.thanh.foodOrder.domain.User;
-import com.thanh.foodOrder.domain.respone.ResponseUserDTO;
+import com.thanh.foodOrder.domain.respone.user.ResponseUserDTO;
 import com.thanh.foodOrder.repository.UserRepository;
 import com.thanh.foodOrder.specification.UserSpecification;
 import com.thanh.foodOrder.util.exception.CommonException;
@@ -22,9 +23,11 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleService roleService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleService roleService) {
         this.userRepository = userRepository;
+        this.roleService = roleService;
     }
 
     public User getUserById(Long id) {
@@ -37,6 +40,11 @@ public class UserService {
     public ResponseUserDTO createUser(User user) {
         log.info("Creating user with email: {}", user.getEmail());
 
+        if (user.getRole() != null) {
+            Role role = this.roleService.getRoleById(user.getRole().getId());
+            user.setRole(role);
+        }
+
         if (checkExistsByEmail(user.getEmail())) {
             log.warn("Email {} already exists", user.getEmail());
             throw new CommonException("Email " + user.getEmail() + " already exists");
@@ -48,12 +56,16 @@ public class UserService {
 
     public ResponseUserDTO convertUserToResUserDTO(User user) {
         ResponseUserDTO userDTO = new ResponseUserDTO();
+        ResponseUserDTO.RoleUser roleUser = new ResponseUserDTO.RoleUser();
         userDTO.setId(user.getId());
         userDTO.setFullName(user.getFullName());
         userDTO.setEmail(user.getEmail());
         userDTO.setPoint(user.getPoint());
         userDTO.setPhone(user.getPhone());
         userDTO.setCreatedAt(user.getCreatedAt());
+        roleUser.setId(user.getRole().getId());
+        roleUser.setName(user.getRole().getName());
+        userDTO.setRoleUser(roleUser);
         return userDTO;
     }
 
@@ -65,6 +77,10 @@ public class UserService {
         log.info("Updating user with id: {}", user.getId());
 
         User existingUser = this.getUserById(user.getId());
+        if (user.getRole() != null) {
+            Role role = this.roleService.getRoleById(user.getRole().getId());
+            existingUser.setRole(role);
+        }
 
         existingUser.setFullName(user.getFullName());
         existingUser.setPhone(user.getPhone());

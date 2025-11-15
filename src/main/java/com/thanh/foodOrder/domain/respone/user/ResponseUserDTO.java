@@ -1,4 +1,4 @@
-package com.thanh.foodOrder.domain.respone;
+package com.thanh.foodOrder.domain.respone.user;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,5 +14,13 @@ public class ResponseUserDTO {
     private String phone;
     private long point;
     private Instant createdAt;
+    private RoleUser roleUser;
+
+    @Getter
+    @Setter
+    public static class RoleUser {
+        private long id;
+        private String name;
+    }
 
 }
