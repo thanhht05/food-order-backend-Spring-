@@ -6,8 +6,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResponseLoginDTO {
-    private long id;
-    private String email;
-    private String fullname;
-    private Role role;
+    private String accessToken;
+    private UserLogin userLogin;
+
+    @Getter
+    @Setter
+    public static class UserLogin {
+        private long id;
+        private String email;
+        private String fullname;
+        private Role role;
+
+    }
 }

@@ -135,4 +135,10 @@ public class UserService {
         return resultPaginationDTO;
     }
 
+    public void updateUserRefreshToken(String email, String refreshToken) {
+        User user = this.getUserByEmail(email);
+        user.setRefreshToken(refreshToken);
+        this.userRepository.save(user);
+    }
+
 }

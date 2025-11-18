@@ -29,6 +29,7 @@ public class User {
    @Column(name = "created_at")
    private Instant createdAt;
    private Instant updatedAt;
+   String refreshToken;
 
    @ManyToOne()
    @JoinColumn(name = "role_id")
