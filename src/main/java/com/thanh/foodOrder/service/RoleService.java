@@ -70,6 +70,7 @@ public class RoleService {
     }
 
     public ResultPaginationDTO getAllRole(Pageable pageable) {
+        log.info("Fetching all role");
         Specification<Role> spec = Specification.allOf();
         Page<Role> roles = this.roleRepository.findAll(spec, pageable);
 
@@ -82,6 +83,8 @@ public class RoleService {
         meta.setTotalElements(roles.getTotalElements());
         res.setResults(roles.getContent());
         res.setMeta(meta);
+
+        log.info("All role fetched successfully");
 
         return res;
     }

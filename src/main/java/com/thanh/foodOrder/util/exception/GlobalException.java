@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.thanh.foodOrder.domain.ResResponse;
+
+import lombok.val;
 
 @RestControllerAdvice
 public class GlobalException {
@@ -44,6 +47,15 @@ public class GlobalException {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
 
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ResResponse<Object>> handleBadCredentialsException(Exception exception) {
+        ResResponse<Object> res = new ResResponse<>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setError(exception.getMessage());
+        res.setMessage("Username or password incorrect");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
 }

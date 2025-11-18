@@ -1,4 +1,4 @@
-package com.thanh.foodOrder.congif;
+package com.thanh.foodOrder.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
