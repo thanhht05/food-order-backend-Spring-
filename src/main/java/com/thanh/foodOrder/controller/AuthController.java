@@ -25,13 +25,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
-    public AuthController(AuthenticationManager authenticationManager, UserService userService) {
+    public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
         this.userService = userService;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     @ApiMessage("Login ")
     public ResponseEntity<ResponseLoginDTO> handleLogin(@RequestBody RequestLoginDTO loginDTO) {
 
@@ -48,7 +50,7 @@ public class AuthController {
         User user = this.userService.getUserByEmail(loginDTO.getUsername());
 
         // generate accessToken
-        String accessToken = JwtUtil.generateToken(loginDTO.getUsername());
+        String accessToken = jwtUtil.generateToken(loginDTO.getUsername());
 
         ResponseLoginDTO res = new ResponseLoginDTO();
         ResponseLoginDTO.UserLogin userLogin = new ResponseLoginDTO.UserLogin();
@@ -58,7 +60,7 @@ public class AuthController {
         userLogin.setRole(user.getRole());
 
         // generate refreshToken
-        String refreshToken = JwtUtil.generateRefreshToken(loginDTO.getUsername());
+        String refreshToken = jwtUtil.generateRefreshToken(loginDTO.getUsername());
 
         // update user with refreshToken
         this.userService.updateUserRefreshToken(loginDTO.getUsername(), refreshToken);

@@ -13,7 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.thanh.foodOrder.domain.ResResponse;
+import com.thanh.foodOrder.domain.RestResponse;
 
 import lombok.val;
 
@@ -23,8 +23,8 @@ public class GlobalException {
     @ExceptionHandler(value = {
             CommonException.class
     })
-    public ResponseEntity<ResResponse<Object>> handleException(Exception exception) {
-        ResResponse<Object> res = new ResResponse<>();
+    public ResponseEntity<RestResponse<Object>> handleException(Exception exception) {
+        RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setMessage("Business logic error");
 
@@ -34,11 +34,11 @@ public class GlobalException {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ResResponse<Object>> handleMethodArgumentNotValidException(
+    public ResponseEntity<RestResponse<Object>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException exception) {
         BindingResult bindingResult = exception.getBindingResult();
         final List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        ResResponse<Object> res = new ResResponse<>();
+        RestResponse<Object> res = new RestResponse<>();
         res.setError(exception.getBody().getDetail());
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         List<String> errors = fieldErrors.stream().map(f -> f.getDefaultMessage()).collect(Collectors.toList());
@@ -50,8 +50,8 @@ public class GlobalException {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ResResponse<Object>> handleBadCredentialsException(Exception exception) {
-        ResResponse<Object> res = new ResResponse<>();
+    public ResponseEntity<RestResponse<Object>> handleBadCredentialsException(Exception exception) {
+        RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError(exception.getMessage());
         res.setMessage("Username or password incorrect");

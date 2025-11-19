@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import java.time.Instant;
 
+import com.thanh.foodOrder.util.JwtUtil;
+
 @Getter
 @Setter
 @Entity
@@ -38,10 +40,12 @@ public class User {
    @PrePersist
    public void handleBeforeCreated() {
       this.createdAt = Instant.now();
+      this.createdBy = JwtUtil.getCurrentUserLogin().orElse("");
    }
 
    @PreUpdate
    public void handleBeforeUpdated() {
+      this.updatedBy = JwtUtil.getCurrentUserLogin().orElse("");
       this.updatedAt = Instant.now();
    }
 }
