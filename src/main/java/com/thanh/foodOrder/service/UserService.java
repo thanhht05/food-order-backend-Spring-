@@ -141,4 +141,11 @@ public class UserService {
         this.userRepository.save(user);
     }
 
+    public User fetchUserByEmailAndRefreshToken(String email, String refrehToken) {
+        return this.userRepository.findByEmailAndRefreshToken(email, refrehToken).orElseThrow(() -> {
+            log.warn("User  with email and refreshToen not found");
+            return new CommonException("User  with email and refreshToen not found");
+        });
+    }
+
 }

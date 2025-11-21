@@ -18,4 +18,19 @@ public class ResponseLoginDTO {
         private Role role;
 
     }
+
+    @Getter
+    @Setter
+    public static class UserGetAccount {
+        private UserLogin userLogin;
+
+    }
+
+    @Getter
+    @Setter
+    public static class UserInsideToken {
+        private long id;
+        private String fullName;
+        private String email;
+    }
 }
