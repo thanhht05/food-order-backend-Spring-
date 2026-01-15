@@ -11,4 +11,6 @@ public class RequestLoginDTO {
     private String username;
     @NotBlank(message = "Password can not be empty")
     private String password;
+    
+    
 }

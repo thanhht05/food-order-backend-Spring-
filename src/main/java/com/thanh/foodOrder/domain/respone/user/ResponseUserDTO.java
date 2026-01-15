@@ -1,9 +1,11 @@
 package com.thanh.foodOrder.domain.respone.user;
 
-import lombok.Getter;
-import lombok.Setter;
+
 
 import java.time.Instant;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

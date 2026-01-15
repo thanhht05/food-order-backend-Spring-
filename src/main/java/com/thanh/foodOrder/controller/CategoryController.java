@@ -4,18 +4,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thanh.foodOrder.domain.Category;
+import com.thanh.foodOrder.domain.ResultPaginationDTO;
 import com.thanh.foodOrder.service.CategoryService;
 import com.thanh.foodOrder.util.anotation.ApiMessage;
 
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -39,6 +46,27 @@ public class CategoryController {
     public ResponseEntity<Category> handleUpdateCategory(@Valid @RequestBody Category category) {
 
         return ResponseEntity.status(HttpStatus.OK).body(this.categoryService.updateCategory(category));
+    }
+
+    @DeleteMapping("/categories/{id}")
+    @ApiMessage("Delete a category")
+    public ResponseEntity<Void> handleDeleteCate(@PathVariable Long id) {
+        this.categoryService.deleteCategory(id);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @GetMapping("/categories/{id}")
+    public ResponseEntity<Category> handleGetCategory(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.categoryService.getCategoryById(id));
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<ResultPaginationDTO> handleGetAllCategories(
+            @RequestParam(name = "name", required = false) String name,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC, value = 5) Pageable pageable) {
+
+        ResultPaginationDTO resultPaginationDTO = this.categoryService.getAllCate(pageable, name);
+        return ResponseEntity.status(HttpStatus.OK).body(resultPaginationDTO);
     }
 
 }

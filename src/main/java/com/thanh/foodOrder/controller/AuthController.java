@@ -49,7 +49,7 @@ public class AuthController {
         // pass username and password
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
                 loginDTO.getPassword());
-
+ 
         // authenticate=>loadUserByUsername
         Authentication authentication = authenticationManager.authenticate(token);
 

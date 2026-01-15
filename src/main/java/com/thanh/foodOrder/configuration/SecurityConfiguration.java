@@ -47,6 +47,7 @@ public class SecurityConfiguration {
         String[] whiteList = {
                 "/api/v1/auth/login",
                 "/api/v1/auth/refreshToken",
+                "/upload/**",
         };
         http
                 .csrf(csrf -> csrf.disable())

@@ -3,8 +3,8 @@ package com.thanh.foodOrder.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 public class ResponseLoginDTO {
     private String accessToken;
     private UserLogin userLogin;

@@ -1,9 +1,16 @@
 package com.thanh.foodOrder.service;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.thanh.foodOrder.domain.Category;
+import com.thanh.foodOrder.domain.ResultPaginationDTO;
 import com.thanh.foodOrder.repository.CategoryRepository;
+import com.thanh.foodOrder.specification.CategorySpecification;
 import com.thanh.foodOrder.util.exception.CommonException;
 
 import lombok.extern.log4j.Log4j2;
@@ -41,12 +48,26 @@ public class CategoryService {
         });
     }
 
+    public Category getCategoryByName(String name) {
+        Category category = this.categoryRepository.findByName(name);
+        if (category == null) {
+            log.warn("Category with name: {} not found", name);
+            throw new CommonException("Category with name " + name + " not found");
+        }
+        return category;
+    }
+
+    public void deleteCategory(Long id) {
+        Category category = getCategoryById(id);
+        this.categoryRepository.delete(category);
+    }
+
     public Category updateCategory(Category category) {
         log.info("Updating category with id: {}", category.getId());
 
         Category existingCategory = getCategoryById(category.getId());
 
-        // chỉ check trùng nếu name bị thay đổi
+        // check name if has change
         if (!existingCategory.getName().equals(category.getName())
                 && checkExistsByName(category.getName())) {
             log.warn("Name {} already exists", category.getName());
@@ -57,6 +78,26 @@ public class CategoryService {
 
         log.info("Category updated successfully");
         return categoryRepository.save(existingCategory);
+    }
+
+    public ResultPaginationDTO getAllCate(Pageable pageable, String name) {
+        Specification<Category> spec = Specification.allOf(
+                name != null ? CategorySpecification.hasName(name) : null);
+        Page<Category> categories = this.categoryRepository.findAll(spec, pageable);
+
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(categories.getTotalPages());
+        meta.setTotalElements(categories.getTotalElements());
+
+        resultPaginationDTO.setMeta(meta);
+        resultPaginationDTO.setResults(categories.getContent());
+
+        return resultPaginationDTO;
     }
 
 }

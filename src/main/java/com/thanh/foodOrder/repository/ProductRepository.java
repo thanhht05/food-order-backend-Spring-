@@ -5,10 +5,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import com.thanh.foodOrder.domain.Category;
+import com.thanh.foodOrder.domain.Product;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSpecificationExecutor<Category> {
-    boolean existsByName(String name);
-
-    Category findByName(String name);
+public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
+    boolean existsByNameAndCategory(String name, Category category);
 }
