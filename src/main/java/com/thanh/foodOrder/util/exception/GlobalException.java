@@ -15,13 +15,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.thanh.foodOrder.domain.RestResponse;
 
-import lombok.val;
-
 @RestControllerAdvice
 public class GlobalException {
 
     @ExceptionHandler(value = {
-            CommonException.class
+            CommonException.class,
+            RuntimeException.class
     })
     public ResponseEntity<RestResponse<Object>> handleException(Exception exception) {
         RestResponse<Object> res = new RestResponse<>();

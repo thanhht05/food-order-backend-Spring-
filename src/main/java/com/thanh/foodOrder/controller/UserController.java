@@ -67,7 +67,7 @@ public class UserController {
     @ApiMessage("Get all users")
     public ResponseEntity<ResultPaginationDTO> getAllUser(
             @RequestParam(name = "fullName", required = false) String fullName,
-            @PageableDefault(sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.ASC, value = 5) Pageable pageable) {
         ResultPaginationDTO users = this.userService.getAllUser(pageable, fullName);
         return ResponseEntity.ok().body(users);
 

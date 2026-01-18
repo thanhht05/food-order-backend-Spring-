@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.thanh.foodOrder.util.exception.CommonException;
+
 @Service
 public class UploadFileService {
     @Value("${thanh.upload-file.base-uri}")
@@ -19,11 +21,11 @@ public class UploadFileService {
     public String uploadFile(String category, MultipartFile file) {
         try {
             if (file == null || file.isEmpty()) {
-                throw new RuntimeException("File is empty");
+                throw new CommonException("File is empty");
 
             }
             if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
-                throw new RuntimeException("Only image files are allowed");
+                throw new CommonException("Only image files are allowed");
             }
 
             Path root = Paths.get(URI.create(baseUri)); // D:/upload
@@ -40,7 +42,7 @@ public class UploadFileService {
             return category + "/" + fileName;
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to store file: " + e.getMessage(), e);
+            throw new CommonException("Failed to store file: " + e.getMessage());
         }
     }
 }
