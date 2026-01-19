@@ -36,10 +36,6 @@ public class Product {
     @NotNull
 
     private int quantity;
-    @Nullable
-    private Double averageRating = 0.0;
-    @Nullable
-    private int rateCount = 0;
 
     @ManyToOne
     @JoinColumn(name = "catrgory_id")

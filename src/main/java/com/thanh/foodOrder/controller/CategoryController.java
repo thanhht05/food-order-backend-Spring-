@@ -50,7 +50,7 @@ public class CategoryController {
 
     @DeleteMapping("/categories/{id}")
     @ApiMessage("Delete a category")
-    public ResponseEntity<Void> handleDeleteCate(@PathVariable Long id) {
+    public ResponseEntity<Void> handleDeleteCate(@PathVariable("id") Long id) {
         this.categoryService.deleteCategory(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }

@@ -15,8 +15,6 @@ public class ResponseProductDTO {
     private double price;
     private String img;
     private int quantity;
-    private int rateCount;
-    private double averageRating;
     private String description;
     private ProductCate productCate;
 
