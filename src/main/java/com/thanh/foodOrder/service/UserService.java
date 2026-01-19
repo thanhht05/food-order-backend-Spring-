@@ -15,7 +15,9 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -113,10 +115,14 @@ public class UserService {
         });
     }
 
-    public ResultPaginationDTO getAllUser(Pageable pageable, String fullName) {
-        Specification<User> spec = Specification.allOf(
-                fullName != null ? UserSpecification.hasName(fullName) : null);
-        Page<User> users = this.userRepository.findAll(spec, pageable);
+    public ResultPaginationDTO getAllUser(String fullName, int page, int size) {
+        Page<User> users;
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+        if (fullName == null) {
+            users = this.userRepository.findAll(pageable);
+        } else {
+            users = this.userRepository.findByFullNameContainingIgnoreCase(fullName, pageable);
+        }
 
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
 

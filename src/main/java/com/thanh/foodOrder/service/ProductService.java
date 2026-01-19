@@ -10,6 +10,7 @@ import javax.print.attribute.standard.PageRanges;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.thanh.foodOrder.domain.Category;
@@ -62,7 +63,8 @@ public class ProductService {
             Long categoryId,
             int page,
             int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size,
+                Sort.by("price").ascending().and(Sort.by("averageRating").descending()));
         Page<Product> pages;
 
         // 1️ No filter
