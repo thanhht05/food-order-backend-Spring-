@@ -17,6 +17,6 @@ public interface BookingTableRepository
 
         boolean existsByName(String name);
 
-        Page<BookingTable> findByName(String name, Pageable pageable);
+        Page<BookingTable> findByNameIgnoreCase(String name, Pageable pageable);
 
 }

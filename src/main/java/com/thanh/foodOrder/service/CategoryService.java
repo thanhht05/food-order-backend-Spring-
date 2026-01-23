@@ -49,7 +49,7 @@ public class CategoryService {
     }
 
     public Category getCategoryByName(String name) {
-        Category category = this.categoryRepository.findByName(name);
+        Category category = this.categoryRepository.findByNameIgnoreCase(name);
         if (category == null) {
             log.warn("Category with name: {} not found", name);
             throw new CommonException("Category with name " + name + " not found");

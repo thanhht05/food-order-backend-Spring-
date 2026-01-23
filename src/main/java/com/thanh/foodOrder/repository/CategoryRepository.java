@@ -10,5 +10,5 @@ import com.thanh.foodOrder.domain.Category;
 public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSpecificationExecutor<Category> {
     boolean existsByName(String name);
 
-    Category findByName(String name);
+    Category findByNameIgnoreCase(String name);
 }

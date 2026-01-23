@@ -67,7 +67,7 @@ public class BookingTableService {
         bookingTable.setTableStatus(bookingTable.getTableStatus());
         log.info("Table with id {} updated successfully", bookingTableDb.getId());
 
-        return bookingTableDb;
+        return this.bookingTableRepository.save(bookingTableDb);
     }
 
     public void deleteTable(Long id) {
@@ -89,7 +89,7 @@ public class BookingTableService {
             tablePages = this.bookingTableRepository.findAll(pageable);
         } else {
 
-            tablePages = this.bookingTableRepository.findByName(keyword, pageable);
+            tablePages = this.bookingTableRepository.findByNameIgnoreCase(keyword, pageable);
         }
 
         ResultPaginationDTO rs = new ResultPaginationDTO();
