@@ -100,12 +100,34 @@ public class VoucherService {
         List<Voucher> vouchers = voucherPage.getContent().stream()
                 .map(voucher -> new Voucher(voucher.getId(), voucher.getCode(), voucher.getPercentDiscount(),
                         voucher.getMaxDiscount(), voucher.getExpiration(), voucher.getCreatedBy(),
-                        voucher.getUpdatedBy(), voucher.getCreatedAt(), voucher.getUpdatedAt()))
+                        voucher.getUpdatedBy(), voucher.getCreatedAt(), voucher.getUpdatedAt(),
+                        voucher.getUsageLimit()))
                 .collect(Collectors.toList());
         rs.setResults(vouchers);
 
         return rs;
 
+    }
+
+    public boolean checkVoucherExpired(Voucher voucher) {
+        LocalDate today = LocalDate.now();
+        return today.isAfter(voucher.getExpiration());
+    }
+
+    public boolean checkUsageVoucher(Voucher voucher) {
+
+        return voucher.getUsageLimit() == 0;
+    }
+
+    public void applyVoucher(Voucher voucher) {
+        if (checkUsageVoucher(voucher)) {
+            throw new CommonException("Voucher " + voucher.getCode() + " is expired");
+
+        }
+        if (checkUsageVoucher(voucher)) {
+            throw new CommonException("Voucher " + voucher.getCode() + " has been fully used.");
+
+        }
     }
 
 }

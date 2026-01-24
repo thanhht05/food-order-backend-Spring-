@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.Table;
 
 import java.time.Instant;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thanh.foodOrder.util.JwtUtil;
 
 @Getter
@@ -37,6 +38,14 @@ public class User {
    @ManyToOne()
    @JoinColumn(name = "role_id")
    private Role role;
+
+   @OneToMany(mappedBy = "user")
+
+   private List<Order> orders;
+
+   @OneToOne(mappedBy = "user")
+
+   private Cart cart;
 
    @PrePersist
    public void handleBeforeCreated() {

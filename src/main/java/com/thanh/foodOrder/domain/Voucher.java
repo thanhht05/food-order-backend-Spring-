@@ -37,6 +37,7 @@ public class Voucher {
 
     private Instant createdAt;
     private Instant updatedAt;
+    private int usageLimit;
 
     @PrePersist
     public void handleBeforeCreated() {

@@ -1,5 +1,7 @@
 package com.thanh.foodOrder.domain;
 
+import java.util.List;
+
 import org.hibernate.annotations.ManyToAny;
 
 import jakarta.annotation.Nullable;
@@ -9,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +25,7 @@ import lombok.Setter;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotBlank(message = "Name cannot be empty")
     private String name;
 
@@ -40,4 +43,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "catrgory_id")
     private Category category;
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderDetail> orderDetails;
 }

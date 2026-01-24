@@ -3,6 +3,7 @@ package com.thanh.foodOrder.domain;
 import java.time.Instant;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thanh.foodOrder.util.JwtUtil;
 
 import jakarta.persistence.CascadeType;
@@ -36,6 +37,7 @@ public class Category {
     private String updatedBy;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     List<Product> products;
 
     @PrePersist
