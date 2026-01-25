@@ -1,13 +1,14 @@
 package com.thanh.foodOrder.dtos;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CartRequestDTO {
+public class OrderItemDTO {
     private Long productId;
+    private String productName;
     private Integer quantity;
+    private Double price;
+
 }

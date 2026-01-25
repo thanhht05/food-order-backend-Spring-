@@ -42,31 +42,29 @@ public class CartService {
             cart.setCartDetails(new ArrayList<>());
         }
         // 2. Loop qua từng item từ JSON
-        for (CartItemRequestDTO item : request.getItems()) {
 
-            Product product = productService.getProductById(item.getProductId());
-            // 3. Check product đã có trong cart chưa
-            Optional<CartDetail> existingItem = cart.getCartDetails()
-                    .stream()
-                    .filter(cd -> cd.getProduct().getId().equals(product.getId()))
-                    .findFirst();
+        Product product = productService.getProductById(request.getProductId());
+        // 3. Check product đã có trong cart chưa
+        Optional<CartDetail> existingItem = cart.getCartDetails()
+                .stream()
+                .filter(cd -> cd.getProduct().getId().equals(product.getId()))
+                .findFirst();
 
-            if (existingItem.isPresent()) {
-                // 4. Nếu có rồi → cộng thêm quantity
-                CartDetail cartDetail = existingItem.get();
-                cartDetail.setQuantity(
-                        cartDetail.getQuantity() + item.getQuantity());
-            } else {
-                // 5. Nếu chưa có → tạo mới
-                CartDetail cartDetail = new CartDetail();
-                cartDetail.setCart(cart);
-                cartDetail.setProduct(product);
-                cartDetail.setQuantity(item.getQuantity());
-                cartDetail.setPrice(product.getPrice());
+        if (existingItem.isPresent()) {
+            // 4. Nếu có rồi → cộng thêm quantity
+            CartDetail cartDetail = existingItem.get();
+            cartDetail.setQuantity(
+                    cartDetail.getQuantity() + request.getQuantity());
+        } else {
+            // 5. Nếu chưa có → tạo mới
+            CartDetail cartDetail = new CartDetail();
+            cartDetail.setCart(cart);
+            cartDetail.setProduct(product);
+            cartDetail.setQuantity(request.getQuantity());
+            cartDetail.setPrice(product.getPrice());
 
-                cart.getCartDetails().add(cartDetail);
+            cart.getCartDetails().add(cartDetail);
 
-            }
         }
 
         cartRepository.save(cart);

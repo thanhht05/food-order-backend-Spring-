@@ -35,6 +35,7 @@ public class Role {
     private String updatedBy;
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @JsonIgnore
     List<User> users;
 
     @PrePersist

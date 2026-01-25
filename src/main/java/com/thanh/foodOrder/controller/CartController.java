@@ -29,7 +29,7 @@ public class CartController {
     }
 
     @PostMapping("/carts")
-    public ResponseEntity<Void> addToCart(@RequestBody CartRequestDTO request) {
+    public ResponseEntity<Void> addProcutToCart(@RequestBody CartRequestDTO request) {
         cartService.addProductsToCart(request);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
