@@ -14,6 +14,7 @@ import com.thanh.foodOrder.domain.BookingTable;
 import com.thanh.foodOrder.domain.ResultPaginationDTO;
 import com.thanh.foodOrder.domain.User;
 import com.thanh.foodOrder.domain.respone.user.ResponseUserDTO;
+import com.thanh.foodOrder.enums.TableStatus;
 import com.thanh.foodOrder.repository.BookingTableRepository;
 import com.thanh.foodOrder.util.exception.CommonException;
 
@@ -28,6 +29,10 @@ public class BookingTableService {
         this.bookingTableRepository = bookingTableRepository;
     }
 
+    public void saveTable(BookingTable bookingTable) {
+        this.bookingTableRepository.save(bookingTable);
+    }
+
     public boolean checkExistTableByName(String name) {
         return this.bookingTableRepository.existsByName(name);
     }
@@ -37,6 +42,10 @@ public class BookingTableService {
             log.warn("Table with id: {} not found", id);
             return new CommonException("Table with id " + id + " not found");
         });
+    }
+
+    public boolean checkingTableStatus(BookingTable bookingTable) {
+        return bookingTable.getTableStatus() == TableStatus.AVAILABLE;
     }
 
     public BookingTable createTable(BookingTable bookingTable) {
@@ -107,7 +116,7 @@ public class BookingTableService {
                 .map(table -> new BookingTable(table.getId(), table.getName(), table.getTableStatus(),
                         table.getCreatedBy(), table
                                 .getUpdatedBy(),
-                        table.getCreatedAt(), table.getUpdatedAt()))
+                        table.getCreatedAt(), table.getUpdatedAt(), table.getOrders()))
                 .collect(Collectors.toList());
         rs.setResults(bookingTables);
         return rs;

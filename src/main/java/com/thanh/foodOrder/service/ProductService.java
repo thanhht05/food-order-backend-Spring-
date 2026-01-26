@@ -34,6 +34,10 @@ public class ProductService {
         this.categoryService = categoryService;
     }
 
+    public void saveProduct(Product product) {
+        this.productRepository.save(product);
+    }
+
     public Product getProductById(Long id) {
         return this.productRepository.findById(id).orElseThrow(() -> {
             log.warn("Product with id: {} not found", id);

@@ -12,4 +12,5 @@ public class CheckoutRequestDTO {
     private String voucherCode;
     private String note;
     private String paymentMethod;
+    private Long tableId;
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thanh.foodOrder.enums.OrderStatus;
+import com.thanh.foodOrder.enums.PaymentStatus;
 import com.thanh.foodOrder.util.JwtUtil;
 
 import jakarta.annotation.Generated;
@@ -51,6 +52,8 @@ public class Order {
     private String updatedBy;
     private Instant createdAt;
     private Instant updatedAt;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     @PrePersist
     public void handleBeforeCreated() {
@@ -75,5 +78,9 @@ public class Order {
 
     @OneToMany(mappedBy = "order")
     List<OrderDetail> orderDetails;
+
+    @ManyToOne
+    @JoinColumn(name = "bookingTable_id")
+    private BookingTable bookingTable;
 
 }

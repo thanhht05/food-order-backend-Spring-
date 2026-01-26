@@ -1,6 +1,7 @@
 package com.thanh.foodOrder.domain;
 
 import java.time.Instant;
+import java.util.List;
 
 import com.thanh.foodOrder.enums.TableStatus;
 import com.thanh.foodOrder.util.JwtUtil;
@@ -11,6 +12,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -48,4 +50,8 @@ public class BookingTable {
         this.updatedBy = JwtUtil.getCurrentUserLogin().orElse("");
         this.updatedAt = Instant.now();
     }
+
+    @OneToMany(mappedBy = "bookingTable")
+    private List<Order> orders;
+
 }
