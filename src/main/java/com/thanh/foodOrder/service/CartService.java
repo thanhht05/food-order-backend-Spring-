@@ -44,6 +44,9 @@ public class CartService {
         // 2. Loop qua từng item từ JSON
 
         Product product = productService.getProductById(request.getProductId());
+
+        // check inventory of product
+        this.productService.checkQuantityProductBeforeAddToCart(product, request.getQuantity());
         // 3. Check product đã có trong cart chưa
         Optional<CartDetail> existingItem = cart.getCartDetails()
                 .stream()

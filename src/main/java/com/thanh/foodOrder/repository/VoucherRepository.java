@@ -1,5 +1,7 @@
 package com.thanh.foodOrder.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,5 +15,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long>, JpaSpec
     boolean existsByCode(String code);
 
     Page<Voucher> findByCodeContainingIgnoreCase(String code, Pageable pageable);
+
+    Optional<Voucher> findByCode(String code);
 
 }

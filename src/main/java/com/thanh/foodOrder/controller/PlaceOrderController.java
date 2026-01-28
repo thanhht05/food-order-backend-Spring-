@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.thanh.foodOrder.domain.Order;
 import com.thanh.foodOrder.domain.User;
 import com.thanh.foodOrder.domain.respone.order.OrderResponseDTO;
+import com.thanh.foodOrder.dtos.CheckOutResponseDTO;
 import com.thanh.foodOrder.dtos.CheckoutRequestDTO;
 import com.thanh.foodOrder.service.OrderService;
 import com.thanh.foodOrder.service.UserService;
@@ -29,7 +30,16 @@ public class PlaceOrderController {
         this.userService = userService;
     }
 
-    @PostMapping("/orders/checkout")
+    @PostMapping("orders/checkout")
+    public ResponseEntity<CheckOutResponseDTO> handleCheckout(
+            @RequestBody CheckoutRequestDTO dto) {
+        String email = JwtUtil.getCurrentUserLogin().orElse("");
+        User curUser = this.userService.getUserByEmail(email);
+
+        return ResponseEntity.status(HttpStatus.OK).body(this.orderService.handleCheckOut(dto, curUser));
+    }
+
+    @PostMapping("/orders/placeOrder")
     public ResponseEntity<OrderResponseDTO> handlePlaceOrder(@RequestBody CheckoutRequestDTO dto) {
         String email = JwtUtil.getCurrentUserLogin().orElse("");
         User curUser = this.userService.getUserByEmail(email);

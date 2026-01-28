@@ -17,7 +17,7 @@ public class OrderResponseDTO {
     private String status;
 
     private Double totalPrice;
-    private Integer discount;
+    private Double discount;
     private Double finalPrice;
     private Long tableId;
     private PaymentStatus paymentStatus;

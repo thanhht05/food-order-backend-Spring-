@@ -13,9 +13,11 @@ import com.thanh.foodOrder.domain.Order;
 import com.thanh.foodOrder.domain.OrderDetail;
 import com.thanh.foodOrder.domain.Product;
 import com.thanh.foodOrder.domain.User;
+import com.thanh.foodOrder.domain.Voucher;
 import com.thanh.foodOrder.domain.respone.order.OrderItemDTO;
 import com.thanh.foodOrder.domain.respone.order.OrderResponseDTO;
 import com.thanh.foodOrder.domain.respone.order.admin.AdminOrderResponseDTO;
+import com.thanh.foodOrder.dtos.CheckOutResponseDTO;
 import com.thanh.foodOrder.dtos.CheckoutRequestDTO;
 import com.thanh.foodOrder.enums.OrderStatus;
 import com.thanh.foodOrder.enums.PaymentStatus;
@@ -32,6 +34,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class OrderService {
 
+    private final VoucherService voucherService;
     private final OrderRepository orderRepository;
     private final CartDetailRepository cartDetailRepository;
     private final OrderDetailRepository orderDetailRepository;
@@ -40,8 +43,9 @@ public class OrderService {
 
     public OrderService(OrderRepository orderRepository, CartDetailRepository cartDetailRepository,
             OrderDetailRepository orderDetailRepository, BookingTableService bookingTableService,
-            ProductService productService) {
+            ProductService productService, VoucherService voucherService) {
         this.orderRepository = orderRepository;
+        this.voucherService = voucherService;
         this.bookingTableService = bookingTableService;
         this.cartDetailRepository = cartDetailRepository;
         this.orderDetailRepository = orderDetailRepository;
@@ -119,6 +123,7 @@ public class OrderService {
     private void validBeforePlaceOrder(CheckoutRequestDTO dto, User curUser, List<CartDetail> cartDetails,
             BookingTable bookingTable) {
 
+        // check available table
         if (!this.bookingTableService.checkingTableStatus(bookingTable)) {
             throw new CommonException("This table is busy");
 
@@ -151,53 +156,109 @@ public class OrderService {
         return totalPrice;
     }
 
-    @Transactional
-    public OrderResponseDTO placeOrder(CheckoutRequestDTO dto, User curUser) {
-        BookingTable bookingTable = this.bookingTableService.getTableById(dto.getTableId());
-        // 1. Retrieve CartDetail list by IDs from request
-        List<CartDetail> cartDetails = this.cartDetailRepository.findByIdIn(dto.getCartDetailIds());
+    public CheckOutResponseDTO handleCheckOut(CheckoutRequestDTO dto, User curUser) {
+
+        BookingTable bookingTable = bookingTableService.getTableById(dto.getTableId());
+        List<CartDetail> cartDetails = cartDetailRepository.findByIdIn(dto.getCartDetailIds());
+
+        // 1. Validate
         validBeforePlaceOrder(dto, curUser, cartDetails, bookingTable);
 
-        // 3. Calculate total price using CartDetail data
+        // 2. Caculate price
+        double totalPrice = caculateTotalPrice(cartDetails);
+        double discount = 0;
+        double finalPrice = totalPrice;
+
+        // 3. If have an voucher then CHECK
+        if (dto.getVoucherCode() != null) {
+            Voucher voucher = voucherService.getVoucherByCode(dto.getVoucherCode());
+            voucherService.checkVoucherBeforeApply(voucher, curUser);
+
+            double discountByPercent = totalPrice * voucher.getPercentDiscount() / 100;
+            discount = Math.min(discountByPercent, voucher.getMaxDiscount());
+            finalPrice = totalPrice - discount;
+        }
+
+        // 4. Retuen preview for user
+        CheckOutResponseDTO res = new CheckOutResponseDTO();
+        for (CartDetail cd : cartDetails) {
+            Long cartDetailId = cd.getId();
+            res.getCartDetailIds().add(cartDetailId);
+        }
+        res.setTotalPrice(totalPrice);
+        res.setDiscount(discount);
+        res.setTableId(dto.getTableId());
+        res.setFinalPrice(finalPrice);
+
+        return res;
+    }
+
+    @Transactional
+    public OrderResponseDTO placeOrder(CheckoutRequestDTO dto, User curUser) {
+
+        BookingTable bookingTable = bookingTableService.getTableById(dto.getTableId());
+        List<CartDetail> cartDetails = cartDetailRepository.findByIdIn(dto.getCartDetailIds());
+
+        // 1. Validate again
+        validBeforePlaceOrder(dto, curUser, cartDetails, bookingTable);
+
+        // 2. Caculate price
         double totalPrice = caculateTotalPrice(cartDetails);
 
-        // 4. Create and save Order
+        Voucher voucher = null;
+        double discount = 0;
+
+        if (dto.getVoucherCode() != null) {
+            voucher = voucherService.getVoucherByCode(dto.getVoucherCode());
+            voucherService.checkVoucherBeforeApply(voucher, curUser);
+
+            double discountByPercent = totalPrice * voucher.getPercentDiscount() / 100;
+            discount = Math.min(discountByPercent, voucher.getMaxDiscount());
+
+            // Update voucher usage
+            voucher.setUsageLimit(voucher.getUsageLimit() - 1);
+        }
+
+        double finalPrice = totalPrice - discount;
+
+        // 3. Create Order
         Order order = new Order();
         order.setUser(curUser);
         order.setOrderDate(LocalDateTime.now());
         order.setTotalPrice(totalPrice);
-        order.setFinalPrice(totalPrice); // No voucher applied yet
+        order.setDiscount(discount);
+        order.setFinalPrice(finalPrice);
         order.setOrderStatus(OrderStatus.PENDING);
-        order.setBookingTable(bookingTable);
         order.setPaymentStatus(PaymentStatus.UNPAID);
+        order.setBookingTable(bookingTable);
+        order.setVoucher(voucher);
 
-        order = this.orderRepository.save(order);
+        orderRepository.save(order);
 
-        // 5. Create OrderDetail records from CartDetail
+        // 4. Create OrderDetail
         for (CartDetail cd : cartDetails) {
-
             OrderDetail od = new OrderDetail();
             od.setOrder(order);
-            od.setNote(dto.getNote()); // Common note for the whole order
             od.setProduct(cd.getProduct());
             od.setQuantity(cd.getQuantity());
             od.setPrice(cd.getPrice());
+            od.setNote(dto.getNote());
 
-            this.orderDetailRepository.save(od);
-            Product p = this.productService.getProductById(cd.getProduct().getId());
+            orderDetailRepository.save(od);
+            // Update inventory
+            Product p = cd.getProduct();
             p.setQuantity(p.getQuantity() - cd.getQuantity());
-            this.productService.saveProduct(p);
         }
 
-        // 6. Remove CartDetail after successful checkout
-        this.cartDetailRepository.deleteAll(cartDetails);
+        // 5. Change table status
+        bookingTable.setTableStatus(TableStatus.RESERVED);
+
+        // 6. Delete cart
+        cartDetailRepository.deleteAll(cartDetails);
 
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
-        bookingTable.setTableStatus(TableStatus.RESERVED);
-        // update table status after order
-        this.bookingTableService.saveTable(bookingTable);
-        OrderResponseDTO res = mapToOrderResponseDTO(order, orderDetails);
-        return res;
+
+        return mapToOrderResponseDTO(order, orderDetails);
     }
 
     @Transactional

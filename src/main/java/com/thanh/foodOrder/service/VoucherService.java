@@ -11,8 +11,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.thanh.foodOrder.domain.Order;
 import com.thanh.foodOrder.domain.ResultPaginationDTO;
+import com.thanh.foodOrder.domain.User;
 import com.thanh.foodOrder.domain.Voucher;
+import com.thanh.foodOrder.repository.OrderRepository;
 import com.thanh.foodOrder.repository.VoucherRepository;
 import com.thanh.foodOrder.util.exception.CommonException;
 
@@ -22,15 +25,28 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class VoucherService {
     private final VoucherRepository voucherRepository;
+    private final OrderRepository orderRepository;
 
-    public VoucherService(VoucherRepository voucherRepository) {
+    public VoucherService(VoucherRepository voucherRepository, OrderRepository orderRepository) {
         this.voucherRepository = voucherRepository;
+        this.orderRepository = orderRepository;
+    }
+
+    public void saveVoucher(Voucher voucher) {
+        this.voucherRepository.save(voucher);
     }
 
     public Voucher getVoucherById(Long id) {
         return this.voucherRepository.findById(id).orElseThrow(() -> {
             log.warn("Voucher with id: {} not found", id);
             return new CommonException("Voucher with id " + id + " not found");
+        });
+    }
+
+    public Voucher getVoucherByCode(String code) {
+        return this.voucherRepository.findByCode(code).orElseThrow(() -> {
+            log.warn("Voucher with code: {} not found", code);
+            return new CommonException("Voucher with code " + code + " not found");
         });
     }
 
@@ -109,18 +125,18 @@ public class VoucherService {
 
     }
 
-    public boolean checkVoucherExpired(Voucher voucher) {
+    private boolean checkVoucherExpired(Voucher voucher) {
         LocalDate today = LocalDate.now();
         return today.isAfter(voucher.getExpiration());
     }
 
-    public boolean checkUsageVoucher(Voucher voucher) {
+    private boolean checkUsageVoucher(Voucher voucher) {
 
         return voucher.getUsageLimit() == 0;
     }
 
-    public void applyVoucher(Voucher voucher) {
-        if (checkUsageVoucher(voucher)) {
+    public void checkVoucherBeforeApply(Voucher voucher, User user) {
+        if (checkVoucherExpired(voucher)) {
             throw new CommonException("Voucher " + voucher.getCode() + " is expired");
 
         }
@@ -128,6 +144,16 @@ public class VoucherService {
             throw new CommonException("Voucher " + voucher.getCode() + " has been fully used.");
 
         }
+        if (orderRepository.existsByUserAndVoucher(user, voucher)) {
+            throw new CommonException(
+                    "Voucher " + voucher.getCode() + " has already been used by this user.");
+        }
+    }
+
+    public boolean checkVoucherUsedByUser(User user, Voucher voucher) {
+
+        return this.orderRepository.existsByUserAndVoucher(user, voucher);
+
     }
 
 }

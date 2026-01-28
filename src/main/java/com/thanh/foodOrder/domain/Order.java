@@ -43,7 +43,7 @@ public class Order {
     private LocalDateTime orderDate;
     private Double totalPrice;
     @Column(nullable = true)
-    private int discount;
+    private Double discount;
     private Double finalPrice;
 
     @Enumerated(EnumType.STRING)

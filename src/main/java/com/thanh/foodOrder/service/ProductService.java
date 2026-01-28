@@ -187,4 +187,12 @@ public class ProductService {
 
     }
 
+    public void checkQuantityProductBeforeAddToCart(Product product, int quantity) {
+
+        if (product.getQuantity() < quantity) {
+            throw new CommonException(
+                    "Product " + product.getId() + " does not have enough stock");
+        }
+    }
+
 }
