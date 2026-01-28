@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thanh.foodOrder.domain.CartDetail;
-import com.thanh.foodOrder.dtos.CartDetailsDTO;
-import com.thanh.foodOrder.dtos.CartRequestDTO;
+import com.thanh.foodOrder.dtos.request.CartRequestDTO;
+import com.thanh.foodOrder.dtos.response.CartDetailsDTO;
 import com.thanh.foodOrder.service.CartService;
 
 import java.util.List;

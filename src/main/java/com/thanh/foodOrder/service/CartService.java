@@ -11,9 +11,9 @@ import com.thanh.foodOrder.domain.Cart;
 import com.thanh.foodOrder.domain.CartDetail;
 import com.thanh.foodOrder.domain.Product;
 import com.thanh.foodOrder.domain.User;
-import com.thanh.foodOrder.dtos.CartDetailsDTO;
-import com.thanh.foodOrder.dtos.CartItemRequestDTO;
-import com.thanh.foodOrder.dtos.CartRequestDTO;
+import com.thanh.foodOrder.dtos.request.CartItemRequestDTO;
+import com.thanh.foodOrder.dtos.request.CartRequestDTO;
+import com.thanh.foodOrder.dtos.response.CartDetailsDTO;
 import com.thanh.foodOrder.repository.CartRepository;
 import com.thanh.foodOrder.util.JwtUtil;
 

@@ -1,4 +1,4 @@
-package com.thanh.foodOrder.domain.request;
+package com.thanh.foodOrder.dtos.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -11,6 +11,5 @@ public class RequestLoginDTO {
     private String username;
     @NotBlank(message = "Password can not be empty")
     private String password;
-    
-    
+
 }

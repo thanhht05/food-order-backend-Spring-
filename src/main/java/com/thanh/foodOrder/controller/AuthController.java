@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.thanh.foodOrder.domain.ResponseLoginDTO;
 import com.thanh.foodOrder.domain.User;
-import com.thanh.foodOrder.domain.request.RequestLoginDTO;
+import com.thanh.foodOrder.dtos.request.RequestLoginDTO;
 import com.thanh.foodOrder.service.UserService;
 import com.thanh.foodOrder.util.JwtUtil;
 import com.thanh.foodOrder.util.anotation.ApiMessage;
@@ -49,7 +49,7 @@ public class AuthController {
         // pass username and password
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
                 loginDTO.getPassword());
- 
+
         // authenticate=>loadUserByUsername
         Authentication authentication = authenticationManager.authenticate(token);
 

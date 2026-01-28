@@ -1,4 +1,4 @@
-package com.thanh.foodOrder.dtos;
+package com.thanh.foodOrder.dtos.request;
 
 import java.util.List;
 

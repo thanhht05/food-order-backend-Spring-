@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thanh.foodOrder.domain.Order;
-import com.thanh.foodOrder.domain.respone.order.OrderResponseDTO;
-import com.thanh.foodOrder.domain.respone.order.admin.AdminOrderResponseDTO;
+import com.thanh.foodOrder.dtos.response.AdminOrderResponseDTO;
+import com.thanh.foodOrder.dtos.response.OrderResponseDTO;
 import com.thanh.foodOrder.service.OrderService;
 import com.thanh.foodOrder.util.anotation.ApiMessage;
 

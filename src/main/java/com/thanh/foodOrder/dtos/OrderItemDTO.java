@@ -1,4 +1,4 @@
-package com.thanh.foodOrder.domain.respone.order;
+package com.thanh.foodOrder.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.thanh.foodOrder.dtos;
+package com.thanh.foodOrder.dtos.response;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

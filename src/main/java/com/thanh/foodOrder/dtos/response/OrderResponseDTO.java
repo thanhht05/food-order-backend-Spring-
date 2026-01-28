@@ -1,7 +1,9 @@
-package com.thanh.foodOrder.domain.respone.order.admin;
+package com.thanh.foodOrder.dtos.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.thanh.foodOrder.dtos.OrderItemDTO;
 import com.thanh.foodOrder.enums.PaymentStatus;
 
 import lombok.Getter;
@@ -9,7 +11,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AdminOrderResponseDTO {
+public class OrderResponseDTO {
+
     private Long orderId;
     private LocalDateTime orderDate;
     private String status;
@@ -20,4 +23,5 @@ public class AdminOrderResponseDTO {
     private Long tableId;
     private PaymentStatus paymentStatus;
 
+    private List<OrderItemDTO> items;
 }
