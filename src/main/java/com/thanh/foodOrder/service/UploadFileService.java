@@ -15,6 +15,7 @@ import com.thanh.foodOrder.util.exception.CommonException;
 
 @Service
 public class UploadFileService {
+
     @Value("${thanh.upload-file.base-uri}")
     private String baseUri;
 
@@ -22,23 +23,35 @@ public class UploadFileService {
         try {
             if (file == null || file.isEmpty()) {
                 throw new CommonException("File is empty");
-
             }
+
             if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
                 throw new CommonException("Only image files are allowed");
             }
 
-            Path root = Paths.get(URI.create(baseUri)); // D:/upload
-            Path dir = root.resolve(category); // D:/upload/beverages
+            // Lấy tên file gốc
+            String originalName = file.getOriginalFilename();
 
-            Files.createDirectories(dir); // auto-create folder
+            // Lấy extension (.jpg .png ...)
+            String ext = originalName.substring(originalName.lastIndexOf("."));
 
-            String fileName = UUID.randomUUID().toString();
+            // Tạo tên mới + giữ extension
+            String fileName = UUID.randomUUID().toString() + ext;
+
+            // Root folder (D:/upload)
+            Path root = Paths.get(URI.create(baseUri));
+
+            // Category folder (D:/upload/Beverages)
+            Path dir = root.resolve(category);
+
+            Files.createDirectories(dir);
+
+            // Đường dẫn file thật
             Path filePath = dir.resolve(fileName);
 
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // return relative path for DB
+            // Path lưu DB (không có / đầu)
             return category + "/" + fileName;
 
         } catch (Exception e) {

@@ -17,14 +17,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.thanh.foodOrder.util.JwtUtil;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
+
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    SecurityConfiguration(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+    SecurityConfiguration(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+            CustomLogoutSuccessHandler customLogoutSuccessHandler) {
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.customLogoutSuccessHandler = customLogoutSuccessHandler;
     }
 
     @Bean
@@ -57,8 +63,11 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin(form -> form.disable());
-
+                .formLogin(form -> form.disable())
+                .logout(logout -> logout
+                        .logoutUrl("/api/v1/auth/logout")
+                        .logoutSuccessHandler(customLogoutSuccessHandler));
+        ;
         return http.build();
     }
 

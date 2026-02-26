@@ -1,12 +1,15 @@
 package com.thanh.foodOrder.controller;
 
 import com.thanh.foodOrder.domain.ResultPaginationDTO;
+import com.thanh.foodOrder.domain.Role;
 import com.thanh.foodOrder.domain.User;
 import com.thanh.foodOrder.domain.respone.user.ResponseUserDTO;
+import com.thanh.foodOrder.service.RoleService;
 import com.thanh.foodOrder.service.UserService;
 import com.thanh.foodOrder.util.anotation.ApiMessage;
 import jakarta.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 
@@ -16,6 +19,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,10 +34,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api/v1")
 public class UserController {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
+
+    // @GetMapping("/home")
+    // public ResponseEntity<Void> getHomePage() {
+    // User user = new User();
+    // user.setEmail("ADMIN@gmail.com");
+    // user.setFullName("ADMIN");
+    // user.setPassword(passwordEncoder.encode("123"));
+
+    // Role r = new Role();
+    // r.setName("ADMIN");
+    // this.roleService.createRole(r);
+
+    // user.setRole(r);
+
+    // this.userService.createUser(user);
+
+    // return ResponseEntity.status(HttpStatus.OK).body(null);
+
+    // }
 
     @PostMapping("/users")
     @ApiMessage("Create a user")

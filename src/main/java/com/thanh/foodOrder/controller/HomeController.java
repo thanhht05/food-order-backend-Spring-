@@ -24,32 +24,5 @@ public class HomeController {
     private ProductService productService;
     @Autowired
     private CategoryService categoryService;
-    // @GetMapping("/")
-    // public String getHomePage() {
-    // User user1 = new User("Thanh", "0123456789");
-    // User user2 = new User("An", "0987654321");
-    // User user3 = new User("Binh", "0112233445");
-    // ArrayList<User> users = new ArrayList<>();
-    // users.add(user1);
-    // users.add(user2);
-    // users.add(user3);
-    // for(User user : users){
-    // System.out.println("Name: " + user.getName() + ", Phone: " +
-    // user.getPhone());
-    // }
-    // return "Welcome to the Food Order Application!";
-
-    // }
-
-    @GetMapping("/home")
-    public ResponseEntity<ResultPaginationDTO> getHomePage(
-            @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "categoryId", required = false) Long categoryId,
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "size", defaultValue = "5") Integer size) {
-
-        ResultPaginationDTO result = productService.searchProduct(keyword, categoryId, page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
 
 }

@@ -25,9 +25,9 @@ public class GlobalException {
     public ResponseEntity<RestResponse<Object>> handleException(Exception exception) {
         RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setMessage("Business logic error");
+        res.setError("Business logic error");
 
-        res.setError(exception.getMessage());
+        res.setMessage(exception.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
