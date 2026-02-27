@@ -28,6 +28,11 @@ public class FormatResResponse implements ResponseBodyAdvice {
         int statusCode = ((ServletServerHttpResponse) response).getServletResponse().getStatus();
         RestResponse<Object> formatResResponse = new RestResponse<>();
         formatResResponse.setStatusCode(statusCode);
+        String path = request.getURI().getPath();
+
+        if (path.contains("/v3/api-docs") || path.contains("/swagger")) {
+            return body;
+        }
         if (statusCode >= 400) {
             return body;
         } else {
