@@ -19,7 +19,7 @@ public class UploadFileService {
     @Value("${thanh.upload-file.base-uri}")
     private String baseUri;
 
-    public String uploadFile(String category, MultipartFile file) {
+    public String uploadFile(MultipartFile file) {
         try {
             if (file == null || file.isEmpty()) {
                 throw new CommonException("File is empty");
@@ -29,30 +29,33 @@ public class UploadFileService {
                 throw new CommonException("Only image files are allowed");
             }
 
-            // Lấy tên file gốc
+            // original filename
             String originalName = file.getOriginalFilename();
 
-            // Lấy extension (.jpg .png ...)
+            if (originalName == null || !originalName.contains(".")) {
+                throw new CommonException("Invalid file name");
+            }
+
+            // extension (.jpg .png ...)
             String ext = originalName.substring(originalName.lastIndexOf("."));
 
-            // Tạo tên mới + giữ extension
-            String fileName = UUID.randomUUID().toString() + ext;
+            // new name with UUID
+            String fileName = UUID.randomUUID() + ext;
 
-            // Root folder (D:/upload)
+            // root folder (D:/upload)
             Path root = Paths.get(URI.create(baseUri));
 
-            // Category folder (D:/upload/Beverages)
-            Path dir = root.resolve(category);
+            // create root folder if missing
+            Files.createDirectories(root);
 
-            Files.createDirectories(dir);
+            // full file path
+            Path filePath = root.resolve(fileName);
 
-            // Đường dẫn file thật
-            Path filePath = dir.resolve(fileName);
-
+            // save file
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // Path lưu DB (không có / đầu)
-            return category + "/" + fileName;
+            // return filename only (store in DB)
+            return fileName;
 
         } catch (Exception e) {
             throw new CommonException("Failed to store file: " + e.getMessage());

@@ -36,36 +36,33 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping(value = "/products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseProductDTO> handleCreateProduct(@RequestPart("product") String productJson,
-            @RequestPart(value = "file") MultipartFile file) throws JsonMappingException, JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        Product product = mapper.readValue(productJson, Product.class);
+    @PostMapping("/products")
+    public ResponseEntity<ResponseProductDTO> handleCreateProduct(@RequestBody Product p) {
 
-        String imagePath = uploadFileService.uploadFile(product.getCategory().getName(), file);
-        product.setImg(imagePath);
-        ResponseProductDTO savedProduct = productService.createProduct(product);
+        ResponseProductDTO savedProduct = productService.createProduct(p);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
-    @PutMapping(value = "/products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ResponseProductDTO> handleUpdateProduct(
-            @RequestPart("product") String productJson,
-            @RequestPart(value = "file", required = false) MultipartFile file) throws JsonProcessingException {
+    // @PutMapping(value = "/products", consumes =
+    // MediaType.MULTIPART_FORM_DATA_VALUE)
+    // public ResponseEntity<ResponseProductDTO> handleUpdateProduct(
+    // @RequestPart("product") String productJson,
+    // @RequestPart(value = "file", required = false) MultipartFile file) throws
+    // JsonProcessingException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        Product product = mapper.readValue(productJson, Product.class);
+    // ObjectMapper mapper = new ObjectMapper();
+    // Product product = mapper.readValue(productJson, Product.class);
 
-        if (file != null && !file.isEmpty()) {
-            String imagePath = uploadFileService.uploadFile(
-                    product.getCategory().getName(), file);
-            product.setImg(imagePath);
-        }
+    // if (file != null && !file.isEmpty()) {
+    // String imagePath = uploadFileService.uploadFile(
+    // product.getCategory().getName(), file);
+    // product.setImg(imagePath);
+    // }
 
-        ResponseProductDTO res = productService.updateProduct(product);
-        return ResponseEntity.ok(res);
-    }
+    // ResponseProductDTO res = productService.updateProduct(product);
+    // return ResponseEntity.ok(res);
+    // }
 
     @DeleteMapping("/products/{id}")
     public ResponseEntity<Void> handleDeletProduct(@PathVariable(value = "id") Long id) {
