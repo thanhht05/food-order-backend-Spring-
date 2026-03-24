@@ -52,8 +52,6 @@ public class AuthController {
     @PostMapping("/auth/register")
     public ResponseEntity<ResponseUserDTO> handleRegister(@RequestBody User user) {
 
-        String hasPassword = this.passwordEncoder.encode(user.getPassword());
-        user.setPassword(hasPassword);
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.createUser(user));
     }
 
@@ -69,8 +67,8 @@ public class AuthController {
         // authenticate=>loadUserByUsername
         Authentication authentication = authenticationManager.authenticate(token);
 
-        // set authentication in SecurityContextHolder
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // // set authentication in SecurityContextHolder
+        // SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = this.userService.getUserByEmail(loginDTO.getUsername());
 

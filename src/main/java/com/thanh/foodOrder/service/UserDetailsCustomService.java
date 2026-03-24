@@ -23,10 +23,8 @@ public class UserDetailsCustomService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         com.thanh.foodOrder.domain.User user = this.userService.getUserByEmail(username);
         List<GrantedAuthority> authorities = new ArrayList<>();
-        return new User(
-                user.getEmail(),
-                user.getPassword(),
-                authorities);
+        User user2 = new User(user.getEmail(), user.getPassword(), authorities);
+        return user2;
 
     }
 

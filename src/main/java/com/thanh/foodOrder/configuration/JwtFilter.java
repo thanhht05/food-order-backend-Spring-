@@ -56,7 +56,7 @@ public class JwtFilter extends OncePerRequestFilter {
         } catch (Exception e) { // catch error
             logger.warn("Token is invaild: " + e.getMessage());
             // set authentication null for spring security call JwtAuthenticationEntryPoint
-            // SecurityContextHolder.clearContext();
+            SecurityContextHolder.clearContext();
 
         }
         filterChain.doFilter(request, response);
