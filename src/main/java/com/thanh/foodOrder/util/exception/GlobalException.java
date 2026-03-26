@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.thanh.foodOrder.domain.RestResponse;
 
+import io.jsonwebtoken.ExpiredJwtException;
+
 @RestControllerAdvice
 public class GlobalException {
 
@@ -55,6 +57,16 @@ public class GlobalException {
         res.setError(exception.getMessage());
         res.setMessage("Username or password incorrect");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<RestResponse<Object>> handleExpiredJwt(Exception exception) {
+        RestResponse<Object> res = new RestResponse<>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setError(HttpStatus.BAD_REQUEST.toString());
+        res.setMessage("Refresh token is expired");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+
     }
 
 }
