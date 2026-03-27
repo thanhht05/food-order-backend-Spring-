@@ -115,13 +115,25 @@ public class UserService {
         });
     }
 
-    public ResultPaginationDTO getAllUser(String fullName, int page, int size) {
+    public ResultPaginationDTO getAllUser(int page, int size, String fullName, String email) {
         Page<User> users;
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
-        if (fullName == null) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").ascending());
+        if ((fullName == null || fullName.isEmpty())
+                && (email == null || email.isEmpty())) {
+
             users = this.userRepository.findAll(pageable);
-        } else {
+
+        } else if (fullName == null || fullName.isEmpty()) {
+
+            users = this.userRepository.findByEmailContainingIgnoreCase(email, pageable);
+
+        } else if (email == null || email.isEmpty()) {
+
             users = this.userRepository.findByFullNameContainingIgnoreCase(fullName, pageable);
+
+        } else {
+
+            users = this.userRepository.findByFullNameAndEmailContainingIgnoreCase(fullName, email, pageable);
         }
 
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();

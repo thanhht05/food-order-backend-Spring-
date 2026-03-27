@@ -94,9 +94,10 @@ public class UserController {
     @ApiMessage("Get all users")
     public ResponseEntity<ResultPaginationDTO> getAllUser(
             @RequestParam(name = "fullName", required = false) String fullName,
+            @RequestParam(name = "email", required = false) String email,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "5") Integer size) {
-        ResultPaginationDTO users = this.userService.getAllUser(fullName, page, size);
+        ResultPaginationDTO users = this.userService.getAllUser(page, size, fullName, email);
         return ResponseEntity.ok().body(users);
 
     }

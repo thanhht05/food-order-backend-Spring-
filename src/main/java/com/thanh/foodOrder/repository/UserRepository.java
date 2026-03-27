@@ -20,4 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Optional<User> findByEmailAndRefreshToken(String email, String refreshToken);
 
     Page<User> findByFullNameContainingIgnoreCase(String name, Pageable pageable);
+
+    Page<User> findByFullNameAndEmailContainingIgnoreCase(String name, String email, Pageable pageable);
+
+    Page<User> findByEmailContainingIgnoreCase(String email, Pageable pageable);
 }

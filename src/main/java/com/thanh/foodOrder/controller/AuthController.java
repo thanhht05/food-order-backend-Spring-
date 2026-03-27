@@ -106,6 +106,7 @@ public class AuthController {
         User user = this.userService.getUserByEmail(email);
         ResponseLoginDTO.UserLogin userLogin = new ResponseLoginDTO.UserLogin();
         ResponseLoginDTO.UserGetAccount userGetAccount = new ResponseLoginDTO.UserGetAccount();
+        userLogin.setId(user.getId());
         userLogin.setEmail(email);
         userLogin.setFullname(user.getFullName());
         userLogin.setRole(user.getRole());
@@ -114,8 +115,7 @@ public class AuthController {
 
     }
 
-    @GetMuserLogin.setId(user.getId());
-        apping("auth/refreshToken")
+    @GetMapping("auth/refreshToken")
     public ResponseEntity<ResponseLoginDTO> handleRefreshToken(
             @CookieValue(name = "refreshToken", defaultValue = "defaultToken") String refreshToken,
             HttpServletResponse response) {
