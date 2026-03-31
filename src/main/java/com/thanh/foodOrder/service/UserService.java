@@ -70,6 +70,7 @@ public class UserService {
         userDTO.setPoint(user.getPoint());
         userDTO.setPhone(user.getPhone());
         userDTO.setCreatedAt(user.getCreatedAt());
+        userDTO.setUpdatedAt(user.getUpdatedAt());
         roleUser.setId(user.getRole().getId());
         roleUser.setName(user.getRole().getName());
         userDTO.setRoleUser(roleUser);

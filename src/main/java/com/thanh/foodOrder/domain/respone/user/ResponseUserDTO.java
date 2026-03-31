@@ -1,7 +1,5 @@
 package com.thanh.foodOrder.domain.respone.user;
 
-
-
 import java.time.Instant;
 
 import lombok.Getter;
@@ -16,6 +14,7 @@ public class ResponseUserDTO {
     private String phone;
     private long point;
     private Instant createdAt;
+    private Instant updatedAt;
     private RoleUser roleUser;
 
     @Getter
