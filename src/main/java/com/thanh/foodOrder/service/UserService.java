@@ -120,9 +120,22 @@ public class UserService {
         });
     }
 
-    public ResultPaginationDTO getAllUser(int page, int size, String fullName, String email) {
+    public ResultPaginationDTO getAllUser(int page, int size, String fullName, String email, String sort) {
+        // custome sort (just sort one field) (fullname or updatedAt) not (fullName and
+        // updatedAt)
+        Sort sortObj = Sort.unsorted();
+        if (sort != null && !sort.isEmpty()) {
+            String[] parts = sort.split(",");
+            String field = parts[0];
+            String direction = parts[1];
+
+            sortObj = direction.equalsIgnoreCase("desc")
+                    ? Sort.by(field).descending()
+                    : Sort.by(field).ascending();
+        }
+
         Page<User> users;
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").ascending());
+        Pageable pageable = PageRequest.of(page - 1, size, sortObj);
         if ((fullName == null || fullName.isEmpty())
                 && (email == null || email.isEmpty())) {
 

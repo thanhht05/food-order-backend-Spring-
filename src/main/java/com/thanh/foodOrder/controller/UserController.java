@@ -98,10 +98,13 @@ public class UserController {
             @RequestParam(name = "fullName", required = false) String fullName,
             @RequestParam(name = "email", required = false) String email,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "size", defaultValue = "5") Integer size) {
-        ResultPaginationDTO users = this.userService.getAllUser(page, size, fullName, email);
-        return ResponseEntity.ok().body(users);
+            @RequestParam(name = "size", defaultValue = "5") Integer size,
+            @RequestParam(name = "sort", required = false) String sort) {
 
+        ResultPaginationDTO users = this.userService
+                .getAllUser(page, size, fullName, email, sort);
+
+        return ResponseEntity.ok().body(users);
     }
 
     @PostMapping("/users/bulk")
