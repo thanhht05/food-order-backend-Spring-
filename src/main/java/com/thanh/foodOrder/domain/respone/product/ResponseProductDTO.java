@@ -1,5 +1,7 @@
 package com.thanh.foodOrder.domain.respone.product;
 
+import java.time.Instant;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +19,8 @@ public class ResponseProductDTO {
     private int quantity;
     private String description;
     private ProductCate productCate;
+    private Instant createdAt;
+    private Instant updatedAt;
 
     @Getter
     @Setter

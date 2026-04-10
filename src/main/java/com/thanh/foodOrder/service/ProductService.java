@@ -107,29 +107,42 @@ public class ProductService {
 
         ResponseProductDTO res = new ResponseProductDTO(product.getId(), product.getName(),
                 product.getPrice(), product.getImg(), product.getQuantity(),
-                product.getDescription(), cate);
+                product.getDescription(), cate, product.getCreatedAt(), product.getUpdatedAt());
         return res;
 
     }
 
     public ResultPaginationDTO searchProduct(
             String keyword,
-            Long categoryId,
+            String categoryName,
             int page,
-            int size) {
+            int size, String sort) {
+
+        Sort sortObj = Sort.by("updatedAt").descending();
+
+        if (sort != null && !sort.isEmpty()) {
+            String[] parts = sort.split(",");
+            String feild = parts[0];
+            String direction = parts[1];
+
+            sortObj = direction.equalsIgnoreCase("desc")
+                    ? Sort.by(feild).descending()
+                    : Sort.by(feild).ascending();
+        }
+
         Pageable pageable = PageRequest.of(page - 1, size,
-                Sort.by("price").ascending());
+                sortObj);
         Page<Product> pages;
 
         // 1️ No filter
-        if ((keyword == null || keyword.isBlank()) && categoryId == null) {
+        if ((keyword == null || keyword.isBlank()) && categoryName == null) {
             pages = productRepository.findAll(pageable);
 
             // 2️ Name + Category
-        } else if (keyword != null && !keyword.isBlank() && categoryId != null) {
+        } else if (keyword != null && !keyword.isBlank() && categoryName != null) {
             pages = productRepository
-                    .findByNameContainingIgnoreCaseAndCategory_Id(
-                            keyword, categoryId, pageable);
+                    .findByNameContainingIgnoreCaseAndCategory_name(
+                            keyword, categoryName, pageable);
 
             // 3️ Only name
         } else if (keyword != null && !keyword.isBlank()) {
@@ -139,7 +152,7 @@ public class ProductService {
             // 4️ Only category
         } else {
             pages = productRepository
-                    .findByCategory_Id(categoryId, pageable);
+                    .findByCategory_name(categoryName, pageable);
         }
 
         ResultPaginationDTO rs = new ResultPaginationDTO();
@@ -159,7 +172,7 @@ public class ProductService {
             productCate.setName(p.getCategory().getName());
 
             ResponseProductDTO res = new ResponseProductDTO(p.getId(), p.getName(), p.getPrice(), p.getImg(),
-                    p.getQuantity(), p.getDescription(), productCate);
+                    p.getQuantity(), p.getDescription(), productCate, p.getCreatedAt(), p.getUpdatedAt());
 
             responseProductDTOs.add(res);
 

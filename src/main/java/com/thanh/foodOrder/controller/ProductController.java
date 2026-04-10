@@ -44,25 +44,13 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
-    // @PutMapping(value = "/products", consumes =
-    // MediaType.MULTIPART_FORM_DATA_VALUE)
-    // public ResponseEntity<ResponseProductDTO> handleUpdateProduct(
-    // @RequestPart("product") String productJson,
-    // @RequestPart(value = "file", required = false) MultipartFile file) throws
-    // JsonProcessingException {
+    @PutMapping(value = "/products")
+    public ResponseEntity<ResponseProductDTO> handleUpdateProduct(
+            @RequestBody Product product) {
 
-    // ObjectMapper mapper = new ObjectMapper();
-    // Product product = mapper.readValue(productJson, Product.class);
-
-    // if (file != null && !file.isEmpty()) {
-    // String imagePath = uploadFileService.uploadFile(
-    // product.getCategory().getName(), file);
-    // product.setImg(imagePath);
-    // }
-
-    // ResponseProductDTO res = productService.updateProduct(product);
-    // return ResponseEntity.ok(res);
-    // }
+        ResponseProductDTO res = productService.updateProduct(product);
+        return ResponseEntity.ok(res);
+    }
 
     @DeleteMapping("/products/{id}")
     public ResponseEntity<Void> handleDeletProduct(@PathVariable(value = "id") Long id) {
@@ -80,11 +68,12 @@ public class ProductController {
     @GetMapping("/products")
     public ResponseEntity<ResultPaginationDTO> getHomePage(
             @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "category", required = false) String categoryName,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "size", defaultValue = "5") Integer size) {
+            @RequestParam(name = "size", defaultValue = "5") Integer size,
+            @RequestParam(name = "sort", required = false) String sort) {
 
-        ResultPaginationDTO result = productService.searchProduct(keyword, categoryId, page, size);
+        ResultPaginationDTO result = productService.searchProduct(keyword, categoryName, page, size, sort);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
