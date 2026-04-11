@@ -1,6 +1,7 @@
 package com.thanh.foodOrder.domain.respone.product;
 
 import java.time.Instant;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +16,7 @@ public class ResponseProductDTO {
     private long id;
     private String name;
     private double price;
-    private String img;
+    private List<String> lstImg;
     private int quantity;
     private String description;
     private ProductCate productCate;

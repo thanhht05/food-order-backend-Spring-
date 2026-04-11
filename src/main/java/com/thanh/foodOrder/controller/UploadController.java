@@ -1,6 +1,8 @@
 package com.thanh.foodOrder.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.thanh.foodOrder.service.UploadFileService;
+import com.thanh.foodOrder.util.anotation.ApiMessage;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -22,14 +25,34 @@ public class UploadController {
         this.uploadFileService = uploadFileService;
     }
 
+    // upload single file
+    // @PostMapping("/upload")
+    // public ResponseEntity<?> uploadFile(
+    // @RequestParam("file") MultipartFile file) {
+
+    // String path = uploadFileService.uploadFile(file);
+
+    // Map<String, String> response = new HashMap<>();
+    // response.put("fileName", path);
+
+    // return ResponseEntity.ok(response);
+    // }
+
+    // upload multi files
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadFile(
-            @RequestParam("file") MultipartFile file) {
+    @ApiMessage("Upload file")
+    public ResponseEntity<?> uploadFiles(
+            @RequestParam("files") MultipartFile[] files) {
 
-        String path = uploadFileService.uploadFile(file);
+        List<String> paths = new ArrayList<>();
 
-        Map<String, String> response = new HashMap<>();
-        response.put("fileName", path);
+        for (MultipartFile file : files) {
+            String path = uploadFileService.uploadFile(file);
+            paths.add(path);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("fileNames", paths);
 
         return ResponseEntity.ok(response);
     }

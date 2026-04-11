@@ -1,6 +1,7 @@
 package com.thanh.foodOrder.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -15,7 +16,7 @@ public class CartItemDetail implements Serializable {
     private String productName;
     private double price;
     private int quantity;
-    private String imageUrl;
+    private List<String> lstImageUrl;
 
     @JsonIgnore
     public double getSubtotal() {

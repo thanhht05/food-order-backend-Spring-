@@ -8,6 +8,7 @@ import org.hibernate.annotations.ManyToAny;
 import com.thanh.foodOrder.util.JwtUtil;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,8 +39,8 @@ public class Product {
 
     @NotNull
     private Double price;
-
-    private String img;
+    @ElementCollection
+    private List<String> lstImg;
 
     @NotNull
 

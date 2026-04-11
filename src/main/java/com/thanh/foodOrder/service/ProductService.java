@@ -81,9 +81,10 @@ public class ProductService {
         productDb.setName(product.getName());
         productDb.setPrice(product.getPrice());
         productDb.setDescription(product.getDescription());
-        if (product.getImg() != null) {
-            productDb.setImg(product.getImg());
-        }
+
+        // if (product.getImg() != null) {
+        // productDb.setImg(product.getImg());
+        // }
         if (product.getCategory() != null && product.getCategory().getId() != 0) {
             Category cate = categoryService.getCategoryById(product.getCategory().getId());
             if (cate != null) {
@@ -104,9 +105,10 @@ public class ProductService {
 
         cate.setId(product.getId());
         cate.setName(product.getCategory().getName());
+        List<String> images = (product.getLstImg() != null) ? product.getLstImg() : new ArrayList<>();
 
         ResponseProductDTO res = new ResponseProductDTO(product.getId(), product.getName(),
-                product.getPrice(), product.getImg(), product.getQuantity(),
+                product.getPrice(), images, product.getQuantity(),
                 product.getDescription(), cate, product.getCreatedAt(), product.getUpdatedAt());
         return res;
 
@@ -171,7 +173,9 @@ public class ProductService {
             productCate.setId(p.getCategory().getId());
             productCate.setName(p.getCategory().getName());
 
-            ResponseProductDTO res = new ResponseProductDTO(p.getId(), p.getName(), p.getPrice(), p.getImg(),
+            List<String> images = (p.getLstImg() != null) ? p.getLstImg() : new ArrayList<>();
+
+            ResponseProductDTO res = new ResponseProductDTO(p.getId(), p.getName(), p.getPrice(), images,
                     p.getQuantity(), p.getDescription(), productCate, p.getCreatedAt(), p.getUpdatedAt());
 
             responseProductDTOs.add(res);

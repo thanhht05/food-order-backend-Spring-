@@ -123,7 +123,7 @@ public class CartService {
             item.setProductName(product.getName());
             item.setPrice(product.getPrice());
             item.setQuantity(request.getQuantity());
-            item.setImageUrl(product.getImg());
+            item.setLstImageUrl(product.getLstImg());
         }
 
         hashOps.put(key, field, item);
@@ -241,7 +241,7 @@ public class CartService {
             pDto.setId(item.getProductId());
             pDto.setName(item.getProductName());
             pDto.setPrice(item.getPrice());
-            pDto.setImg(item.getImageUrl());
+            pDto.setLstImg(item.getLstImageUrl());
 
             dto.setProductInnerCartDetail(pDto);
 
