@@ -1,6 +1,8 @@
 
 package com.thanh.foodOrder.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +23,7 @@ public class ProductImage {
     private Long id;
     private String imgName;
     @ManyToOne
-
+    @JsonIgnore
     @JoinColumn(name = "product_id")
     private Product product;
 }

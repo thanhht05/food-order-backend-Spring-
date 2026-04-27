@@ -12,14 +12,10 @@ import lombok.Setter;
 @Setter
 public class CartDetailsDTO {
 
-    // private Long id;
     private int quantity;
-    private Double price;
     private Double totalPrice;
-    // private Long userId;
-    // private Long cartId;
+
     private ProductInnerCartDetail productInnerCartDetail;
-    // private CategoryInnerCartDetail CategoryInnerCartDetail;
 
     @Getter
     @Setter
@@ -30,13 +26,5 @@ public class CartDetailsDTO {
         private List<ProductImage> lstImg;
 
     }
-
-    // @Getter
-    // @Setter
-    // public static class CategoryInnerCartDetail {
-    // private Long id;
-    // private String name;
-
-    // }
 
 }

@@ -66,6 +66,7 @@ public class ProductController {
 
     @GetMapping("/products/{id}")
     public ResponseEntity<ResponseProductDTO> handelGetProductById(@PathVariable("id") Long id) {
+
         Product product = this.productService.getProductById(id);
         return ResponseEntity.status(HttpStatus.OK).body(this.productService.convertToProductDTO(product));
     }
@@ -80,7 +81,8 @@ public class ProductController {
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "sort", required = false) String sort
 
-    ) {
+    ) throws InterruptedException {
+        Thread.sleep(3000); // delay 3 giây
 
         ResultPaginationDTO result = productService.search(keyword, category, from, to, page, size, sort);
         return ResponseEntity.status(HttpStatus.OK).body(result);
