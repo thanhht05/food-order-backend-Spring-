@@ -71,7 +71,6 @@ public class OrderService {
         res.setStatus(order.getOrderStatus().name());
         res.setTotalPrice(order.getTotalPrice());
         res.setDiscount(order.getDiscount());
-        res.setFinalPrice(order.getFinalPrice());
         res.setTableId(order.getBookingTable().getId());
         res.setPaymentStatus(order.getPaymentStatus());
 
@@ -99,7 +98,6 @@ public class OrderService {
         dto.setStatus(order.getOrderStatus().name());
         dto.setTotalPrice(order.getTotalPrice());
         dto.setDiscount(order.getDiscount());
-        dto.setFinalPrice(order.getFinalPrice());
         dto.setTableId(order.getBookingTable().getId());
         dto.setPaymentStatus(order.getPaymentStatus());
 
@@ -219,15 +217,12 @@ public class OrderService {
             voucher.setUsageLimit(voucher.getUsageLimit() - 1);
         }
 
-        double finalPrice = totalPrice - discount;
-
         // 3. Create Order
         Order order = new Order();
         order.setUser(curUser);
         order.setOrderDate(LocalDateTime.now());
         order.setTotalPrice(totalPrice);
         order.setDiscount(discount);
-        order.setFinalPrice(finalPrice);
         order.setOrderStatus(OrderStatus.PENDING);
         order.setPaymentStatus(PaymentStatus.UNPAID);
         order.setBookingTable(bookingTable);

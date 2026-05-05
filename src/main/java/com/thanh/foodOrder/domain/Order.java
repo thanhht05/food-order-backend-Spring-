@@ -44,7 +44,6 @@ public class Order {
     private Double totalPrice;
     @Column(nullable = true)
     private Double discount;
-    private Double finalPrice;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;

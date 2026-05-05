@@ -12,4 +12,6 @@ import com.thanh.foodOrder.domain.CartDetail;
 public interface CartDetailRepository extends JpaRepository<CartDetail, Long> {
     List<CartDetail> findByIdIn(List<Long> ids);
 
+    CartDetail findByCartAndProductId(Cart cart, long productId);
+
 }

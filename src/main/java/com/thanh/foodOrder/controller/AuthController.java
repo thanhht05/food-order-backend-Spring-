@@ -159,9 +159,11 @@ public class AuthController {
 
     }
 
-    @PostMapping("auth/logout")
-    public ResponseEntity<?> logout() {
-        return ResponseEntity.ok("Logged out successfully");
-    }
+    // api in CustomLogoutSuccessHandler
+    // @PostMapping("auth/logout")
+    // public ResponseEntity<?> logout(HttpServletResponse response) {
+
+    // return ResponseEntity.ok("Logged out");
+    // }
 
 }

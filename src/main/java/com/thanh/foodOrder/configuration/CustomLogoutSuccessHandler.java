@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thanh.foodOrder.domain.RestResponse;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -25,10 +26,14 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
             Authentication authentication)
             throws IOException, ServletException {
 
-        String token = request.getHeader("Authorization");
-        System.out.println("User logout with token: " + token);
-
         // TODO: blacklist token nếu dùng JWT
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // nếu dùng HTTPS
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // xóa cookie
+
+        response.addCookie(cookie);
 
         // tạo response chuẩn project
         RestResponse<Object> rest = new RestResponse<>();

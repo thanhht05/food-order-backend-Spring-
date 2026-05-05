@@ -294,7 +294,7 @@ public class CartService {
             CartDetailsResponseDTO.ProductInnerCartDetail p = new CartDetailsResponseDTO.ProductInnerCartDetail();
             Product prd = cd.getProduct();
             p.setId(prd.getId());
-            p.setQuantity(prd.getQuantity());
+            p.setQuantity(cd.getQuantity());
             p.setName(prd.getName());
             p.setImg(prd.getLstImg().get(0).getImgName());
             p.setPrice(prd.getPrice());
@@ -326,4 +326,37 @@ public class CartService {
         return res;
     }
 
+    public CartDetailsResponseDTO updateCartItem(CartRequestDTO request) {
+
+        String email = JwtUtil.getCurrentUserLogin().orElseThrow();
+        User user = userService.getUserByEmail(email);
+
+        Cart cart = user.getCart();
+        Product product = productService.getProductById(request.getProductId());
+
+        CartDetail cartItem = cartDetailRepository.findByCartAndProductId(cart, product.getId());
+        // 👉 CASE 1: quantity = 0 → delete
+        if (request.getQuantity() <= 0) {
+            this.cartDetailRepository.delete(cartItem);
+            return mapToResponse(cart);
+
+        }
+        if (cartItem != null) {
+
+            cartItem.setQuantity(request.getQuantity());
+            cartDetailRepository.save(cartItem);
+
+        }
+        // chưa có → add mới
+        else {
+            CartDetail newItem = new CartDetail();
+            newItem.setCart(cart);
+            newItem.setProduct(product);
+            newItem.setQuantity(request.getQuantity());
+            newItem.setPrice(product.getPrice());
+
+            cartDetailRepository.save(newItem);
+        }
+        return mapToResponse(cart);
+    }
 }

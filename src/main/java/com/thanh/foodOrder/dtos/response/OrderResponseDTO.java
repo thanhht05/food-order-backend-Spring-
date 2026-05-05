@@ -19,7 +19,6 @@ public class OrderResponseDTO {
 
     private Double totalPrice;
     private Double discount;
-    private Double finalPrice;
     private Long tableId;
     private PaymentStatus paymentStatus;
 

@@ -15,6 +15,7 @@ import com.thanh.foodOrder.service.UserService;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -54,12 +56,25 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
+    @PutMapping("/cartDetails")
+    public ResponseEntity<CartDetailsResponseDTO> handeUpdateCartDetail(@RequestBody CartRequestDTO req) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(this.cartService.updateCartItem(req));
+    }
+
     @PostMapping("/cartMerge")
     public ResponseEntity<?> mergeCart(
             @RequestBody MergeCartRequest request,
             @AuthenticationPrincipal UserDetails userdDetail) {
         User user = this.userService.getUserByEmail(userdDetail.getUsername());
         return ResponseEntity.ok(cartService.mergeCart(user.getId(), request));
+    }
+
+    @DeleteMapping("/cartsDetails/{id}")
+    public String handleDeleteCartItem(@RequestBody String entity) {
+        // TODO: process POST request
+
+        return entity;
     }
 
 }
