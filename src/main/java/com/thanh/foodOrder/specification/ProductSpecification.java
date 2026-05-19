@@ -1,4 +1,4 @@
-package com.thanh.foodOrder.service;
+package com.thanh.foodOrder.specification;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -8,14 +8,17 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.thanh.foodOrder.domain.BookingTable;
+import com.thanh.foodOrder.domain.Product;
 import com.thanh.foodOrder.domain.ResultPaginationDTO;
 import com.thanh.foodOrder.domain.User;
 import com.thanh.foodOrder.domain.respone.user.ResponseUserDTO;
 import com.thanh.foodOrder.enums.TableStatus;
 import com.thanh.foodOrder.repository.BookingTableRepository;
+import com.thanh.foodOrder.specification.TableSpecification;
 import com.thanh.foodOrder.util.exception.CommonException;
 
 import lombok.extern.log4j.Log4j2;
@@ -35,6 +38,10 @@ public class BookingTableService {
 
     public boolean checkExistTableByName(String name) {
         return this.bookingTableRepository.existsByName(name);
+    }
+
+    public BookingTable getTableByName(String tableName) {
+        return this.bookingTableRepository.findByName(tableName);
     }
 
     public BookingTable getTableById(Long id) {
@@ -57,6 +64,7 @@ public class BookingTableService {
 
         }
         log.info("Table created successfully with id: {}", bookingTable.getId());
+        bookingTable.setTableStatus(TableStatus.AVAILABLE);
 
         return this.bookingTableRepository.save(bookingTable);
 
@@ -73,7 +81,7 @@ public class BookingTableService {
         }
 
         bookingTableDb.setName(bookingTable.getName());
-        bookingTable.setTableStatus(bookingTable.getTableStatus());
+        bookingTableDb.setTableStatus(bookingTable.getTableStatus());
         log.info("Table with id {} updated successfully", bookingTableDb.getId());
 
         return this.bookingTableRepository.save(bookingTableDb);
@@ -89,17 +97,14 @@ public class BookingTableService {
 
     }
 
-    public ResultPaginationDTO getAllTables(int page, int size, String keyword) {
+    public ResultPaginationDTO getAllTables(int page, int size, String keyword, String status) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
+        Specification<BookingTable> spec = Specification.allOf(
+                TableSpecification.findByStatus(status),
+                TableSpecification.hasKeyword(keyword));
         // no filter
-        Page<BookingTable> tablePages;
-        if (keyword == null || keyword.isBlank()) {
-            tablePages = this.bookingTableRepository.findAll(pageable);
-        } else {
-
-            tablePages = this.bookingTableRepository.findByNameIgnoreCase(keyword, pageable);
-        }
+        Page<BookingTable> tablePages = this.bookingTableRepository.findAll(spec, pageable);
 
         ResultPaginationDTO rs = new ResultPaginationDTO();
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();

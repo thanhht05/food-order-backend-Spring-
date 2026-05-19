@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.thanh.foodOrder.domain.CartDetail;
 import com.thanh.foodOrder.domain.User;
+import com.thanh.foodOrder.domain.respone.CartDetailUserDTO;
 import com.thanh.foodOrder.dtos.request.CartRequestDTO;
 import com.thanh.foodOrder.dtos.request.MergeCartRequest;
 import com.thanh.foodOrder.dtos.response.AddToCartResponseDTO;
@@ -75,6 +76,11 @@ public class CartController {
         // TODO: process POST request
 
         return entity;
+    }
+
+    @GetMapping("/cartDetailUser")
+    public ResponseEntity<List<CartDetailUserDTO>> handleGetCartDetailByUser() {
+        return ResponseEntity.ok(this.cartService.getCartDetailsByUser());
     }
 
 }

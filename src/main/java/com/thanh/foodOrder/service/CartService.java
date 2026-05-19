@@ -18,6 +18,7 @@ import com.thanh.foodOrder.domain.CartDetail;
 import com.thanh.foodOrder.domain.CartItemDetail;
 import com.thanh.foodOrder.domain.Product;
 import com.thanh.foodOrder.domain.User;
+import com.thanh.foodOrder.domain.respone.CartDetailUserDTO;
 import com.thanh.foodOrder.dtos.request.CartItemRequestDTO;
 import com.thanh.foodOrder.dtos.request.CartRequestDTO;
 import com.thanh.foodOrder.dtos.request.MergeCartRequest;
@@ -276,10 +277,7 @@ public class CartService {
         if (cart == null) {
             // Return empty data to avoid FrontEnd errors when calling the getcartDetail API
             // in case user not have cart-cartdetail
-            return new CartDetailsResponseDTO(
-                    0,
-                    0.0,
-                    new ArrayList<>());
+            return new CartDetailsResponseDTO();
         }
         List<CartDetail> cartDetails = cart.getCartDetails();
 
@@ -358,5 +356,38 @@ public class CartService {
             cartDetailRepository.save(newItem);
         }
         return mapToResponse(cart);
+    }
+
+    public List<CartDetailUserDTO> getCartDetailsByUser() {
+        String email = JwtUtil.getCurrentUserLogin().orElseThrow();
+        User user = userService.getUserByEmail(email);
+
+        Cart cart = user.getCart();
+        if (cart == null) {
+            // Return empty data to avoid FrontEnd errors when calling the getcartDetail API
+            // in case user not have cart-cartdetail
+            return null;
+        }
+        List<CartDetail> cartDetails = cart.getCartDetails();
+
+        var lst = new ArrayList<CartDetailUserDTO>();
+
+        for (CartDetail cd : cartDetails) {
+            CartDetailUserDTO dto = new CartDetailUserDTO();
+            dto.setCartDetailId(cd.getId());
+            dto.setQuantity(cd.getQuantity());
+            CartDetailUserDTO.ProductInnerCartDetail p = new CartDetailUserDTO.ProductInnerCartDetail();
+            Product product = cd.getProduct();
+            p.setId(product.getId());
+            p.setName(product.getName());
+            p.setCategoryName(product.getCategory().getName());
+            p.setImg(product.getLstImg().get(0).getImgName());
+            p.setPrice(product.getPrice());
+            p.setQuantity(product.getQuantity());
+
+            dto.setProductsInnerCartDetail(p);
+            lst.add(dto);
+        }
+        return lst;
     }
 }

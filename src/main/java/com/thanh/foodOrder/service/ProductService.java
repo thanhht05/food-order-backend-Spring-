@@ -24,6 +24,7 @@ import com.thanh.foodOrder.domain.respone.role.ResponseRoleDTO;
 import com.thanh.foodOrder.dtos.request.ProductRequestDTO;
 import com.thanh.foodOrder.dtos.request.ProductUpdateRequestDTO;
 import com.thanh.foodOrder.repository.ProductRepository;
+import com.thanh.foodOrder.specification.ProductSpecification;
 import com.thanh.foodOrder.util.exception.CommonException;
 
 import jakarta.persistence.criteria.Predicate;

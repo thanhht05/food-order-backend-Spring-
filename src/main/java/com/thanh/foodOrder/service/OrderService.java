@@ -227,6 +227,7 @@ public class OrderService {
         order.setPaymentStatus(PaymentStatus.UNPAID);
         order.setBookingTable(bookingTable);
         order.setVoucher(voucher);
+        order.setNote(dto.getNote() != null ? dto.getNote() : "");
 
         orderRepository.save(order);
 

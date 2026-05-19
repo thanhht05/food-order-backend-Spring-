@@ -44,7 +44,7 @@ public class Order {
     private Double totalPrice;
     @Column(nullable = true)
     private Double discount;
-
+    private String note;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     private String createdBy;

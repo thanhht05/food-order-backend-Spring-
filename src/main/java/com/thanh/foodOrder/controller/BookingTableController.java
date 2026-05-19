@@ -52,13 +52,21 @@ public class BookingTableController {
         return ResponseEntity.status(HttpStatus.OK).body(bookingTable);
     }
 
+    @GetMapping("/bookingTables/search")
+    public ResponseEntity<BookingTable> handleGetTableName(
+            @RequestParam(name = "tableName", required = false) String tableName) {
+        BookingTable bookingTable = this.bookingTableService.getTableByName(tableName);
+        return ResponseEntity.status(HttpStatus.OK).body(bookingTable);
+    }
+
     @GetMapping("bookingTables")
     public ResponseEntity<ResultPaginationDTO> handleGellAllTables(
             @RequestParam(name = "page", defaultValue = "1", required = false) Integer page,
-            @RequestParam(name = "size", defaultValue = "6", required = false) Integer size,
-            @RequestParam(name = "keyword", required = false) String keyword) {
+            @RequestParam(name = "size", defaultValue = "5", required = false) Integer size,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "status", required = false) String status) {
 
-        ResultPaginationDTO bookingTables = this.bookingTableService.getAllTables(page, size, keyword);
+        ResultPaginationDTO bookingTables = this.bookingTableService.getAllTables(page, size, keyword, status);
         return ResponseEntity.status(HttpStatus.OK).body(bookingTables);
     }
 
