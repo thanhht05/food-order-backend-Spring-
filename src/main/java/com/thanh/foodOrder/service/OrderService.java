@@ -17,6 +17,7 @@ import com.thanh.foodOrder.domain.OrderDetail;
 import com.thanh.foodOrder.domain.Product;
 import com.thanh.foodOrder.domain.User;
 import com.thanh.foodOrder.domain.Voucher;
+import com.thanh.foodOrder.dtos.request.BuyNowRequestDTO;
 import com.thanh.foodOrder.dtos.request.CheckoutRequestDTO;
 import com.thanh.foodOrder.dtos.response.CheckOutResponseDTO;
 import com.thanh.foodOrder.dtos.response.order.AdminOrderResponseDTO;
@@ -263,6 +264,79 @@ public class OrderService {
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
 
         return mapToOrderResponseDTO(order, orderDetails);
+    }
+
+    public OrderResponseDTO handleBuyNow(BuyNowRequestDTO req, User curUser) {
+        BookingTable table = this.bookingTableService.getTableById(req.getTableId());
+        if (table == null) {
+            throw new CommonException("This table is busy");
+
+        }
+        Product product = this.productService.getProductById(req.getProductId());
+        if (product == null) {
+            throw new CommonException("No available product");
+
+        }
+        if (req.getQuantity() <= 0) {
+            throw new CommonException("Item quantity is invalid");
+
+        }
+        double totalPrice = product.getPrice() * req.getQuantity();
+
+        // 3. Create Order
+        Order order = new Order();
+        order.setUser(curUser);
+        order.setOrderDate(LocalDateTime.now());
+        order.setTotalPrice(totalPrice);
+        order.setDiscount(null);
+        order.setOrderStatus(OrderStatus.PENDING);
+
+        // handle payment
+        order.setPaymentStatus(PaymentStatus.UNPAID);
+
+        order.setBookingTable(table);
+        order.setVoucher(null);
+        order.setNote(null);
+
+        orderRepository.save(order);
+        // 4. Create OrderDetail
+        OrderDetail od = new OrderDetail();
+        od.setOrder(order);
+        od.setProduct(product);
+        od.setQuantity(req.getQuantity());
+        od.setPrice(product.getPrice());
+        od.setNote(null);
+
+        orderDetailRepository.save(od);
+        // Update inventory
+        product.setQuantity(product.getQuantity() - req.getQuantity());
+
+        // 5. Change table status
+        table.setTableStatus(TableStatus.RESERVED);
+
+        OrderResponseDTO res = new OrderResponseDTO();
+
+        res.setOrderId(order.getId());
+        res.setOrderDate(order.getOrderDate());
+        res.setStatus(order.getOrderStatus().name());
+        res.setTotalPrice(order.getTotalPrice());
+        res.setDiscount(order.getDiscount());
+        res.setTableId(table.getId());
+        res.setPaymentStatus(order.getPaymentStatus());
+
+        List<OrderItemDTO> lst = new ArrayList<>();
+
+        OrderItemDTO item = new OrderItemDTO();
+        item.setProductId(product.getId());
+        item.setPrice(product.getPrice());
+        item.setProductName(product.getName());
+        item.setQuantity(req.getQuantity());
+
+        lst.add(item);
+
+        res.setItems(lst);
+        return res;
+
     }
 
     @Transactional

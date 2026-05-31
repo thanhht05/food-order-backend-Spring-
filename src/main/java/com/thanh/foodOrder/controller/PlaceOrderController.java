@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.thanh.foodOrder.domain.Order;
 import com.thanh.foodOrder.domain.User;
+import com.thanh.foodOrder.dtos.request.BuyNowRequestDTO;
 import com.thanh.foodOrder.dtos.request.CheckoutRequestDTO;
 import com.thanh.foodOrder.dtos.response.CheckOutResponseDTO;
 import com.thanh.foodOrder.dtos.response.order.OrderResponseDTO;
@@ -52,5 +53,13 @@ public class PlaceOrderController {
 
     // return entity;
     // }
+
+    @PostMapping("orders/buy-now")
+    public ResponseEntity<OrderResponseDTO> handleBuyNow(@RequestBody BuyNowRequestDTO dto) {
+        String email = JwtUtil.getCurrentUserLogin().orElse("");
+        User curUser = this.userService.getUserByEmail(email);
+
+        return ResponseEntity.status(HttpStatus.OK).body(this.orderService.handleBuyNow(dto, curUser));
+    }
 
 }
