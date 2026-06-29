@@ -51,11 +51,11 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(this.cartService.removeProductFromCart(id));
     }
 
-    @GetMapping("/cartDetails")
-    public ResponseEntity<CartDetailsResponseDTO> getAllCarts() {
-        CartDetailsResponseDTO res = this.cartService.getAllCartDetail();
-        return ResponseEntity.status(HttpStatus.OK).body(res);
-    }
+    // @GetMapping("/cartDetails")
+    // public ResponseEntity<CartDetailsResponseDTO> getAllCarts() {
+    // CartDetailsResponseDTO res = this.cartService.getAllCartDetail();
+    // return ResponseEntity.status(HttpStatus.OK).body(res);
+    // }
 
     @PutMapping("/cartDetails")
     public ResponseEntity<CartDetailsResponseDTO> handeUpdateCartDetail(@RequestBody CartRequestDTO req) {

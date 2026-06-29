@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CartDetailsResponseDTO {
 
-    private long cartDetailId;
+    private List<Long> cartDetailId;
     private int quantity;
     private Double totalPrice;
 

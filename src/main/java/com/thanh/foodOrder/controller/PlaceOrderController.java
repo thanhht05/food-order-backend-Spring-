@@ -9,6 +9,7 @@ import com.thanh.foodOrder.dtos.request.BuyNowRequestDTO;
 import com.thanh.foodOrder.dtos.request.CheckoutRequestDTO;
 import com.thanh.foodOrder.dtos.response.CheckOutResponseDTO;
 import com.thanh.foodOrder.dtos.response.order.OrderResponseDTO;
+import com.thanh.foodOrder.service.EmailService;
 import com.thanh.foodOrder.service.OrderService;
 import com.thanh.foodOrder.service.UserService;
 import com.thanh.foodOrder.util.JwtUtil;
@@ -19,16 +20,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1")
 public class PlaceOrderController {
     private final OrderService orderService;
     private final UserService userService;
+    private EmailService emailService;
 
-    public PlaceOrderController(OrderService odOrderService, UserService userService) {
+    public PlaceOrderController(OrderService odOrderService, UserService userService, EmailService emailService) {
         this.orderService = odOrderService;
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     @PostMapping("orders/checkout")

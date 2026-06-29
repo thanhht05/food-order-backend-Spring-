@@ -16,11 +16,11 @@ public class OrderHistoryDTO {
     private String fullName;
     private long cartId;
 
-    private List<InfoOrder> infoOrders;
+    private List<OrderInfo> orderInfo;
 
     @Getter
     @Setter
-    public static class InfoOrder {
+    public static class OrderInfo {
 
         private long orderId;
         private Instant orderDate;

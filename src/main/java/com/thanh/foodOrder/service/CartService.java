@@ -220,6 +220,11 @@ public class CartService {
         res.setQuantity(totalQuantity);
         res.setTotalPrice(totalPrice);
         res.setProductsInnerCartDetail(items);
+        List<Long> cdIds = new ArrayList<>();
+        for (CartDetail ids : cart.getCartDetails()) {
+            cdIds.add(ids.getId());
+        }
+        res.setCartDetailId(cdIds);
 
         return res;
     }
@@ -269,41 +274,44 @@ public class CartService {
     // }
     // }
 
-    public CartDetailsResponseDTO getAllCartDetail() {
-        String email = JwtUtil.getCurrentUserLogin().orElseThrow();
-        User user = userService.getUserByEmail(email);
+    // public CartDetailsResponseDTO getAllCartDetail() {
+    // String email = JwtUtil.getCurrentUserLogin().orElseThrow();
+    // User user = userService.getUserByEmail(email);
 
-        Cart cart = user.getCart();
-        if (cart == null) {
-            // Return empty data to avoid FrontEnd errors when calling the getcartDetail API
-            // in case user not have cart-cartdetail
-            return new CartDetailsResponseDTO();
-        }
-        List<CartDetail> cartDetails = cart.getCartDetails();
+    // Cart cart = user.getCart();
+    // if (cart == null) {
+    // // Return empty data to avoid FrontEnd errors when calling the getcartDetail
+    // API
+    // // in case user not have cart-cartdetail
+    // return new CartDetailsResponseDTO();
+    // }
+    // List<CartDetail> cartDetails = cart.getCartDetails();
 
-        CartDetailsResponseDTO res = new CartDetailsResponseDTO();
-        int total = getTotalQuantity(user.getId());
-        double totalPrice = getTotalPrice(user.getId());
-        res.setQuantity(total);
-        res.setTotalPrice(totalPrice);
-        List<CartDetailsResponseDTO.ProductInnerCartDetail> lst = new ArrayList<>();
+    // CartDetailsResponseDTO res = new CartDetailsResponseDTO();
+    // int total = getTotalQuantity(user.getId());
+    // double totalPrice = getTotalPrice(user.getId());
+    // res.setQuantity(total);
+    // res.setTotalPrice(totalPrice);
+    // res.setCartDetailId(total);
+    // List<CartDetailsResponseDTO.ProductInnerCartDetail> lst = new ArrayList<>();
 
-        for (CartDetail cd : cartDetails) {
-            CartDetailsResponseDTO.ProductInnerCartDetail p = new CartDetailsResponseDTO.ProductInnerCartDetail();
-            Product prd = cd.getProduct();
-            p.setId(prd.getId());
-            p.setQuantity(cd.getQuantity());
-            p.setName(prd.getName());
-            p.setImg(prd.getLstImg().get(0).getImgName());
-            p.setPrice(prd.getPrice());
-            p.setCategoryName(prd.getCategory().getName());
-            lst.add(p);
+    // for (CartDetail cd : cartDetails) {
+    // CartDetailsResponseDTO.ProductInnerCartDetail p = new
+    // CartDetailsResponseDTO.ProductInnerCartDetail();
+    // Product prd = cd.getProduct();
+    // p.setId(prd.getId());
+    // p.setQuantity(cd.getQuantity());
+    // p.setName(prd.getName());
+    // p.setImg(prd.getLstImg().get(0).getImgName());
+    // p.setPrice(prd.getPrice());
+    // p.setCategoryName(prd.getCategory().getName());
+    // lst.add(p);
 
-        }
-        res.setProductsInnerCartDetail(lst);
-        return res;
+    // }
+    // res.setProductsInnerCartDetail(lst);
+    // return res;
 
-    }
+    // }
 
     public AddToCartResponseDTO removeProductFromCart(Long productId) {
 

@@ -49,9 +49,12 @@ public class OrderService {
     private final ProductService productService;
     private final UserService userService;
 
+    private final EmailService emailService;
+
     public OrderService(OrderRepository orderRepository, CartDetailRepository cartDetailRepository,
             OrderDetailRepository orderDetailRepository, BookingTableService bookingTableService,
-            ProductService productService, VoucherService voucherService, UserService userService) {
+            ProductService productService, VoucherService voucherService, UserService userService,
+            EmailService emailService) {
         this.orderRepository = orderRepository;
         this.voucherService = voucherService;
         this.bookingTableService = bookingTableService;
@@ -59,6 +62,7 @@ public class OrderService {
         this.orderDetailRepository = orderDetailRepository;
         this.productService = productService;
         this.userService = userService;
+        this.emailService = emailService;
 
     }
 
@@ -238,12 +242,12 @@ public class OrderService {
         order.setVoucher(voucher);
         order.setNote(dto.getNote() != null ? dto.getNote() : "");
 
-        orderRepository.save(order);
-
+        Order orderSaved = orderRepository.save(order);
+        List<OrderDetail> orderDetailsToSave = new ArrayList<>();
         // 4. Create OrderDetail
         for (CartDetail cd : cartDetails) {
             OrderDetail od = new OrderDetail();
-            od.setOrder(order);
+            od.setOrder(orderSaved);
             od.setProduct(cd.getProduct());
             od.setQuantity(cd.getQuantity());
             od.setPrice(cd.getPrice());
@@ -253,12 +257,18 @@ public class OrderService {
             // Update inventory
             Product p = cd.getProduct();
             p.setQuantity(p.getQuantity() - cd.getQuantity());
+            orderDetailsToSave.add(od);
         }
+        List<OrderDetail> savedOrderDetails = orderDetailRepository.saveAll(orderDetailsToSave);
+        orderSaved.setOrderDetails(savedOrderDetails);
 
         // 5. Change table status
         bookingTable.setTableStatus(TableStatus.RESERVED);
 
         // 6. Delete cart
+        String subject = "Hóa đơn đơn hàng #" + orderSaved.getId() + " - Food Order";
+        String htmlContent = buildInvoiceHtml(orderSaved);
+        this.emailService.sendOrderInvoiceEmail("huuthanhht05@gmail.com", subject, htmlContent);
         cartDetailRepository.deleteAll(cartDetails);
 
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
@@ -266,6 +276,7 @@ public class OrderService {
         return mapToOrderResponseDTO(order, orderDetails);
     }
 
+    @Transactional
     public OrderResponseDTO handleBuyNow(BuyNowRequestDTO req, User curUser) {
         BookingTable table = this.bookingTableService.getTableById(req.getTableId());
         if (table == null) {
@@ -392,19 +403,19 @@ public class OrderService {
         response.setCartId(user.getCart().getId());
 
         if (rows.isEmpty()) {
-            response.setInfoOrders(new ArrayList<>());
+            response.setOrderInfo(new ArrayList<>());
             return response;
         }
 
-        Map<Long, OrderHistoryDTO.InfoOrder> orderMap = new LinkedHashMap<>();
+        Map<Long, OrderHistoryDTO.OrderInfo> orderMap = new LinkedHashMap<>();
 
         for (OrderHistoryProjection row : rows) {
 
-            OrderHistoryDTO.InfoOrder order = orderMap.computeIfAbsent(
+            OrderHistoryDTO.OrderInfo order = orderMap.computeIfAbsent(
                     row.getOrderId(),
                     id -> {
 
-                        OrderHistoryDTO.InfoOrder dto = new OrderHistoryDTO.InfoOrder();
+                        OrderHistoryDTO.OrderInfo dto = new OrderHistoryDTO.OrderInfo();
 
                         dto.setOrderId(row.getOrderId());
                         dto.setOrderDate(row.getOrderDate());
@@ -431,10 +442,50 @@ public class OrderService {
             order.getProducts().add(product);
         }
 
-        response.setInfoOrders(
+        response.setOrderInfo(
                 new ArrayList<>(orderMap.values()));
 
         return response;
     }
 
+    private String buildInvoiceHtml(Order order) {
+        StringBuilder itemsHtml = new StringBuilder();
+
+        // Vòng lặp duyệt qua danh sách các món ăn khách đặt để build thành các dòng
+        // trong bảng <tr>
+        for (OrderDetail item : order.getOrderDetails()) {
+            itemsHtml.append("<tr>")
+                    .append("<td style='padding: 8px; border-bottom: 1px solid #ddd;'>")
+                    .append(item.getProduct().getName())
+                    .append("</td>")
+                    .append("<td style='padding: 8px; border-bottom: 1px solid #ddd; text-align: center;'>")
+                    .append(item.getQuantity()).append("</td>")
+                    .append("<td style='padding: 8px; border-bottom: 1px solid #ddd; text-align: right;'>")
+                    .append(item.getPrice()).append("đ</td>")
+                    .append("</tr>");
+        }
+
+        // Toàn bộ khung giao diện hóa đơn HTML
+        return "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px;'>"
+                + "  <h2 style='color: #ff4757; text-align: center;'>CẢM ƠN BẠN ĐÃ ĐẶT HÀNG!</h2>"
+                + "  <p>Xin chào <strong>" + order.getUser().getFullName() + "</strong>,</p>"
+                + "  <p>Đơn hàng <strong>#" + order.getId()
+                + "</strong> của bạn đã được tiếp nhận thành công. Dưới đây là thông tin chi tiết hóa đơn:</p>"
+                + "  <table style='width: 100%; border-collapse: collapse; margin-top: 20px;'>"
+                + "    <thead>"
+                + "      <tr style='background-color: #f2f2f2;'>"
+                + "        <th style='padding: 8px; text-align: left;'>Món ăn</th>"
+                + "        <th style='padding: 8px; text-align: center;'>SL</th>"
+                + "        <th style='padding: 8px; text-align: right;'>Giá</th>"
+                + "      </tr>"
+                + "    </thead>"
+                + "    <tbody>"
+                + itemsHtml.toString()
+                + "    </tbody>"
+                + "  </table>"
+                + "  <h3 style='text-align: right; margin-top: 20px; color: #ff4757;'>Tổng thanh toán: "
+                + order.getTotalPrice() + "đ</h3>"
+                + "  <p style='margin-top: 30px; font-size: 12px; color: #777; text-align: center;'>Nếu có bất kỳ thắc mắc nào, vui lòng liên hệ hotline 1900xxxx. Chúc bạn ngon miệng!</p>"
+                + "</div>";
+    }
 }
